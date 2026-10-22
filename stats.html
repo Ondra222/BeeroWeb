@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Statistics</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="ui.css">
+<style>
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.tile{background:var(--card);border-radius:20px;padding:16px 16px 14px}
+.tile .l{color:var(--muted);font-size:14px}
+.tile .v{font-size:30px;font-weight:700;margin-top:4px;letter-spacing:-.4px}
+.chart{margin-top:12px}
+.chart .row{justify-content:space-between;margin-bottom:16px}
+.chart .row b{font-size:16px}
+.chart .bars{height:110px;gap:8px;position:relative}
+.chart .row{margin-bottom:46px}
+.chart .bars .b i{border-radius:7px}
+.trio{margin-top:12px;display:flex;justify-content:space-around;text-align:center;padding:16px 8px}
+.trio .v{font-size:26px;font-weight:700}
+.trio .l{color:var(--muted);font-size:14px;margin-top:2px}
+.top{margin-top:12px;display:flex;justify-content:space-between;align-items:center;padding:16px 18px}
+.top b{font-weight:700}
+.empty{color:var(--muted);text-align:center;padding:40px 10px;font-size:15px}
+/* beer types: what was drunk and how much of each */
+.kinds{margin-top:12px;padding:16px 16px 10px}
+.kinds>.row{justify-content:space-between;align-items:baseline;padding:0 2px}
+.kinds>.row b{font-size:16px}
+.kinds .pills{margin-top:12px}
+.kinds .pill{font-size:14px;padding:9px 13px}
+#kBy .pill{background:var(--card2)}
+#kBy .pill.on{background:var(--cream);color:var(--gold-ink)}
+#kList{margin-top:6px}
+.kr{display:flex;align-items:center;gap:12px;padding:10px 2px;border-top:1px solid var(--line)}
+.kr:first-child{border-top:none}
+.kr .m{flex:1;min-width:0}
+.kr .t{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.kr .t span:first-child{font-size:15px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kr .t span:last-child{flex:none;font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+.kr .t small{color:var(--muted);font-weight:500;font-size:13px;margin-left:6px}
+.kr .p{height:6px;border-radius:3px;background:var(--card2);margin-top:7px;overflow:hidden}
+.kr .p i{display:block;height:100%;border-radius:3px;background:var(--gold)}
+.kr.unk .t span:first-child{color:var(--muted)}
+.kr.unk .p i{background:var(--grey)}
+.kr .deg{flex:none;width:40px;height:40px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px}
+.kr .q{flex:none;width:40px;height:40px;border-radius:14px;border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-weight:700}
+#kMore{display:block;width:100%;border:none;background:none;color:var(--gold);font-size:14px;font-weight:600;padding:10px 0 4px}
+#kMore[hidden]{display:none}
+.kempty{color:var(--muted);font-size:14px;text-align:center;padding:18px 0 10px}
+</style>
+</head>
+<body>
+<div class="page">
+ <div class="h1">Statistics</div>
+ <div class="grid">
+  <div class="tile"><div class="l">Total beers</div><div class="v gold" id="total">0</div></div>
+  <div class="tile"><div class="l">This month</div><div class="v" id="month">0</div></div>
+  <div class="tile"><div class="l">Active days</div><div class="v" id="days">0</div></div>
+  <div class="tile"><div class="l">Longest streak</div><div class="v" id="streak">0</div></div>
+ </div>
+ <div class="card kinds">
+  <div class="row"><b>Beer types</b><span class="muted" id="kSum"></span></div>
+  <div class="pills" id="kPer"></div>
+  <div class="pills" id="kBy"></div>
+  <div id="kList"></div>
+  <button id="kMore" hidden>Show all</button>
+ </div>
+ <div class="card chart">
+  <div class="row"><b>Last 12 weeks</b><span class="muted">beers / week</span></div>
+  <div class="bars" id="bars"></div>
+ </div>
+ <div class="card trio">
+  <div><div class="v" id="cities">0</div><div class="l">cities</div></div>
+  <div><div class="v" id="countries">0</div><div class="l">countries</div></div>
+  <div><div class="v" id="places">0</div><div class="l">locations</div></div>
+ </div>
+ <div class="card top"><span class="muted">Top city</span><b id="topcity">&ndash;</b></div>
+</div>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var B=window.Beero;
+function render(){
+ var list=B.load(),s=B.stats(list);
+ document.getElementById('total').textContent=s.total;
+ document.getElementById('month').textContent=s.month;
+ document.getElementById('days').textContent=s.activeDays;
+ document.getElementById('streak').textContent=B.n(s.longest,'day');
+ document.getElementById('cities').textContent=s.cities;
+ document.getElementById('countries').textContent=s.countries;
+ document.getElementById('places').textContent=s.places;
+ document.getElementById('topcity').textContent=s.topCity?s.topCity+' · '+B.n(s.topCityN,'beer'):'–';
+ var w=B.weeks(s.days,12),max=1;w.forEach(function(x){max=Math.max(max,x.n)});
+ document.getElementById('bars').innerHTML=w.map(function(x){
+  return '<div class="b'+(x.now?' on':'')+'"><i style="height:'+Math.max(8,Math.round(x.n/max*100))+'%"></i></div>'}).join('');
+ B.bindBars(document.getElementById('bars'),w.map(function(x){
+  var a=B.parse(x.from),e=new Date(a);e.setDate(a.getDate()+6);
+  var r=B.dayRange(a,e);
+  return '<b>'+x.n+'</b> '+B.word(x.n,'beer')+' \u00b7 '+(x.now?B.tr('this week'):r)}));
+}
+
+/* ---------- beer types (kind from the catalogue, stored with every beer) ---------- */
+var CAT={},kPer='all',kBy='beer',kAll=false;
+try{(JSON.parse(B.A?B.A.getCatalog():JSON.stringify(window.DEMO_CATALOG||{beers:[]})).beers||[]).forEach(function(b){CAT[b.id]=b})}catch(e){}
+var PERIODS=[['all','All time'],['month','This month'],['week','This week']],GROUPS=[['beer','Beers'],['brand','Brands'],['degree','Degrees']];
+function inPeriod(b){if(kPer==='all')return true;var t=B.today();
+ if(kPer==='month')return b.d.slice(0,7)===t.slice(0,7);
+ return b.d>=B.fmt(B.mondayOf(new Date()))&&b.d<=t}
+/* one group key per beer: [key, name, logo html] */
+function groupOf(b){var c=b.bid?CAT[b.bid]:null;
+ if(!b.bid&&!b.beer)return null;
+ if(kBy==='beer')return {k:'b:'+(b.bid||b.beer),n:c?c.label:b.beer,ic:B.logo(c?c.brand:b.beer,c&&c.logo,40)};
+ if(kBy==='brand'){var br=c?c.brand:b.beer;return {k:'r:'+br,n:br,ic:B.logo(br,c&&c.logo,40)}}
+ if(!c)return {k:'d:?',n:B.tr('Other'),ic:'<span class="deg">?</span>'};
+ if(c.nonalc)return {k:'d:na',n:B.tr('Non-alcoholic'),ic:'<span class="deg">0%</span>'};
+ if(c.degree!=null)return {k:'d:'+c.degree,n:degName(c.degree),ic:'<span class="deg">'+c.degree+'°</span>',o:c.degree};
+ return {k:'d:-',n:B.tr('No degree given'),ic:'<span class="deg">–</span>',o:99}}
+var CS_DEG={7:'Sedmička',8:'Osmička',9:'Devítka',10:'Desítka',11:'Jedenáctka',12:'Dvanáctka',13:'Třináctka',14:'Čtrnáctka',15:'Patnáctka',16:'Šestnáctka',17:'Sedmnáctka',18:'Osmnáctka'};
+function degName(d){return B.lang==='cs'?(CS_DEG[d]||d+'° pivo'):d+'° beer'}
+function kinds(){
+ function pills(id,list,cur,set){var el=document.getElementById(id);
+  el.innerHTML=list.map(function(x){return '<button class="pill'+(x[0]===cur?' on':'')+'">'+B.esc(B.tr(x[0]==='month'?'This month':x[1]))+'</button>'}).join('');
+  Array.prototype.forEach.call(el.children,function(b,i){b.onclick=function(){set(list[i][0]);kAll=false;kinds()}})}
+ pills('kPer',PERIODS,kPer,function(v){kPer=v});
+ pills('kBy',GROUPS,kBy,function(v){kBy=v});
+ var list=(B.beers||B.load()).filter(inPeriod),m={},rows=[],unk=0;
+ list.forEach(function(b){var g=groupOf(b);if(!g){unk++;return}
+  (m[g.k]||(m[g.k]=(rows.push(g),g))).c=(m[g.k].c||0)+1});
+ /* beers and brands: most drunk first; degrees: 10°, 11°, 12°… then the rest */
+ rows.sort(function(a,b){return kBy==='degree'?((a.o==null?100:a.o)-(b.o==null?100:b.o))||b.c-a.c:b.c-a.c});
+ if(unk)rows.push({n:B.tr('Unspecified'),c:unk,ic:'<span class="q">?</span>',unk:1});
+ var total=list.length,max=1;rows.forEach(function(r){max=Math.max(max,r.c)});
+ document.getElementById('kSum').textContent=B.n(total,'beer');
+ var show=kAll?rows:rows.slice(0,6),el=document.getElementById('kList');
+ el.innerHTML=total?show.map(function(r){var pct=Math.round(r.c/total*100);
+  return '<div class="kr'+(r.unk?' unk':'')+'">'+r.ic+'<div class="m"><div class="t"><span'+(kBy==='degree'||r.unk?'':' translate="no"')+'>'+B.esc(r.n)+'</span><span>'+r.c+'<small>'+pct+' %</small></span></div>'+
+   '<div class="p"><i style="width:'+Math.max(3,Math.round(r.c/max*100))+'%"></i></div></div></div>'}).join(''):'<div class="kempty">'+B.tr('No beers in this period.')+'</div>';
+ var more=document.getElementById('kMore');more.hidden=rows.length<=6;more.textContent=B.tr(kAll?'Show less':'Show all');
+ more.onclick=function(){kAll=!kAll;kinds()}}
+
+B.nav('stats');render();kinds();
+</script>
+</body>
+</html>

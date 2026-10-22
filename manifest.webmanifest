@@ -1,0 +1,25 @@
+{
+  "id": "./",
+  "name": "Beero – beer counter",
+  "short_name": "Beero",
+  "description": "Count your beers, see them on the map, collect awards. Drink responsibly.",
+  "lang": "en",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#11141B",
+  "theme_color": "#11141B",
+  "categories": ["lifestyle", "food"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
+    { "src": "icons/maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "+1 beer", "short_name": "+1", "url": "./index.html?add=1", "icons": [{ "src": "icons/add-192.png", "sizes": "192x192", "type": "image/png" }] },
+    { "name": "Map", "url": "./map.html" },
+    { "name": "Stats", "url": "./stats.html" }
+  ]
+}

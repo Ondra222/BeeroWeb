@@ -1,0 +1,199 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Beer catalogue</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="ui.css">
+<style>
+.page{padding-bottom:40px}
+.hd{display:flex;align-items:center;gap:12px}
+.hd .t{flex:1;min-width:0}
+.hd .h1{margin:0;line-height:1.1}
+.cbtn{flex:none;width:44px;height:44px;border-radius:22px;border:1px solid var(--line);background:none;display:flex;align-items:center;justify-content:center;padding:0}
+.cbtn.add{border:none;background:var(--gold);color:var(--gold-ink)}
+.cbtn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.lead{color:var(--muted);font-size:15px;margin-top:12px}
+#search{display:block;width:100%;margin-top:16px;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--line);
+ border-radius:16px;padding:13px 16px;outline:none}
+#search::placeholder{color:var(--faint)}
+#search:focus{border-color:var(--gold)}
+#flt{margin-top:12px}
+.sec{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:20px 2px 8px}
+.list{display:flex;flex-direction:column;gap:8px}
+/* brand header with the brewery logo */
+.bhd{display:flex;align-items:center;gap:12px;margin:22px 2px 10px}
+.bhd .bn{font-size:17px;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bhd .tag{flex:none;font-size:12px;font-weight:600;color:var(--muted);background:var(--card2);border-radius:10px;padding:4px 8px}
+.bhd .tag.craft{color:var(--gold-ink);background:var(--gold)}
+.bhd .cnt{margin-left:auto;flex:none;color:var(--faint);font-size:13px}
+.beer.nologo .pick{padding-left:18px}
+.beer{display:flex;align-items:center;background:var(--card);border-radius:20px;box-shadow:inset 0 0 0 1.5px transparent}
+.beer.on{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.beer .pick{flex:1;min-width:0;display:flex;align-items:center;gap:14px;border:none;background:none;text-align:left;padding:12px 14px}
+.beer .m{flex:1;min-width:0}
+.beer .n{display:block;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.beer .d{display:block;color:var(--muted);font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.beer .ok{flex:none;width:32px;height:32px;border-radius:16px;background:var(--gold);color:var(--gold-ink);display:flex;align-items:center;justify-content:center}
+.beer .ok svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+.beer .del{flex:none;width:44px;height:44px;margin-right:8px;border:none;background:none;color:var(--faint);display:flex;align-items:center;justify-content:center;padding:0}
+.beer .del svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.none-ic{flex:none;width:48px;height:48px;border-radius:14px;border:1.5px dashed var(--line);display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:22px;font-weight:700}
+.empty{background:var(--card);border-radius:20px;padding:24px 20px;text-align:center;color:var(--muted);font-size:14px}
+/* add form */
+#form{display:none;margin-top:16px;flex-direction:column;gap:12px}
+#form.open{display:flex}
+#form label{display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+#form input[type=text]{font:inherit;font-size:16px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;outline:none;width:100%;box-sizing:border-box}
+#form input:focus{border-color:var(--gold)}
+#form .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+#form .chk{flex-direction:row;align-items:center;gap:10px;font-size:15px;color:var(--text)}
+#form .chk input{width:22px;height:22px;accent-color:var(--gold)}
+#form .err{color:var(--gold);font-size:14px;min-height:0}
+#form .err:empty{display:none}
+#form .btns{display:flex;gap:8px}
+#form .btns button{flex:1;border:none;border-radius:14px;padding:13px 10px;font-size:15px;font-weight:700;background:var(--gold);color:var(--gold-ink)}
+#form .btns button.s{background:var(--card2);color:var(--text)}
+</style>
+</head>
+<body>
+<div class="page">
+ <div class="hd">
+  <button class="cbtn" id="back" aria-label="Back"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+  <div class="t"><div class="h1">Beer catalogue</div></div>
+  <button class="cbtn add" id="addBtn" aria-label="Add your own beer"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+ </div>
+ <div class="lead">Pick what you drink. The app and the widget count this beer.</div>
+
+ <form class="card" id="form" autocomplete="off">
+  <b style="font-size:17px">Add your own beer</b>
+  <label>Brand<input type="text" id="fBrand" maxlength="40"></label>
+  <label>Beer<input type="text" id="fName" maxlength="40"></label>
+  <div class="two">
+   <label>Degree (°)<input type="text" id="fDeg" inputmode="numeric" maxlength="2"></label>
+   <label>Alcohol (%)<input type="text" id="fAbv" inputmode="decimal" maxlength="4"></label>
+  </div>
+  <label>Style (optional)<input type="text" id="fStyle" maxlength="40" placeholder="IPA, stout…"></label>
+  <label class="chk"><input type="checkbox" id="fNa">Non-alcoholic</label>
+  <label class="chk"><input type="checkbox" id="fCraft">Craft beer</label>
+  <label class="chk"><input type="checkbox" id="fForeign">Foreign beer</label>
+  <div class="err" id="fErr"></div>
+  <div class="btns"><button type="button" class="s" id="fCancel">Cancel</button><button type="submit">Save and count</button></div>
+ </form>
+
+ <input id="search" type="search" placeholder="Search brand or beer">
+ <div class="pills" id="flt"></div>
+ <div id="list"></div>
+</div>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var B=window.Beero,A=B.A,CS=B.lang==='cs';
+var data={active:null,beers:[]},filter='all',q='';
+var FILTERS=[['all','All'],[10,'10°'],[11,'11°'],[12,'12°'],['craft','Craft'],['foreign','Foreign'],['na','Non-alcoholic'],['mine','My beers']];
+var COUNTRY={CZ:'Czechia',DE:'Germany',BE:'Belgium',NL:'Netherlands',IE:'Ireland',DK:'Denmark',MX:'Mexico',GB:'United Kingdom',PL:'Poland',SK:'Slovakia',AT:'Austria',US:'USA',INT:'Foreign'};
+function foreign(b){return !!b.country&&b.country!=='CZ'}
+var ICON_OK='<svg viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></svg>';
+var ICON_DEL='<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13M10 11v6M14 11v6"/></svg>';
+
+function load(){
+ try{data=A?JSON.parse(A.getCatalog()):(window.DEMO_CATALOG||data)}catch(e){data={active:null,beers:[]}}
+ if(!data.beers)data.beers=[]}
+function fold(t){return String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'')}
+function meta(b){var p=[];
+ if(b.nonalc)p.push(B.tr('Non-alcoholic'));else{if(b.degree!=null)p.push(b.degree+'°');if(b.style)p.push(B.tr(b.style))}
+ if(b.abv!=null)p.push(B.dec(b.abv,1)+' %');
+ if(b.uses)p.push(CS?b.uses+'× vypito':'drunk '+b.uses+'×');
+ return p.join(' · ')}
+function match(b){
+ if(filter==='na'&&!b.nonalc)return false;
+ if(filter==='mine'&&!b.custom)return false;
+ if(filter==='craft'&&!b.craft)return false;
+ if(filter==='foreign'&&!foreign(b))return false;
+ if(typeof filter==='number'&&(b.nonalc||b.degree!==filter))return false;
+ if(q){var s=fold(q);if(fold(b.brand+' '+b.name+' '+b.label+' '+(b.style||'')+' '+B.tr(b.style||'')).indexOf(s)<0)return false}
+ return true}
+/* showBrand: mixed list (recently drunk) -> logo + full name; inside a brand group the logo is in the brand header */
+function row(b,showBrand){
+ var on=b.id===data.active;
+ return '<div class="beer'+(on?' on':'')+(showBrand?'':' nologo')+'">'+
+  '<button class="pick" data-id="'+B.esc(b.id)+'" aria-pressed="'+on+'">'+(showBrand?B.logo(b.brand,b.logo,48):'')+
+   '<span class="m"><span class="n" translate="no">'+B.esc(showBrand?b.label:b.name)+'</span><span class="d">'+B.esc(meta(b))+'</span></span>'+
+   (on?'<span class="ok" aria-hidden="true">'+ICON_OK+'</span>':'')+'</button>'+
+  (b.custom?'<button class="del" data-del="'+B.esc(b.id)+'" aria-label="'+B.esc(B.tr('Delete'))+' '+B.esc(b.label)+'">'+ICON_DEL+'</button>':'')+
+  '</div>'}
+
+function render(){
+ document.getElementById('flt').innerHTML=FILTERS.map(function(f){
+  return '<button class="pill'+(f[0]===filter?' on':'')+'" data-f="'+f[0]+'">'+B.esc(B.tr(f[1]))+'</button>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#flt .pill'),function(b,i){b.onclick=function(){filter=FILTERS[i][0];render()}});
+
+ var shown=data.beers.filter(match),h='';
+ /* "no specific beer" + recently drunk only on the plain view */
+ if(filter==='all'&&!q){
+  var none=!data.active;
+  h+='<div class="list" style="margin-top:16px"><div class="beer'+(none?' on':'')+'"><button class="pick" data-id="" aria-pressed="'+none+'">'+
+   '<span class="none-ic" aria-hidden="true">?</span><span class="m"><span class="n">'+B.tr('No specific beer')+'</span><span class="d">'+B.tr('Count beers without a kind')+'</span></span>'+
+   (none?'<span class="ok" aria-hidden="true">'+ICON_OK+'</span>':'')+'</button></div></div>';
+  var recent=data.beers.filter(function(b){return b.last}).sort(function(a,b){return b.last-a.last}).slice(0,3);
+  if(recent.length)h+='<div class="sec">'+B.tr('Recently drunk')+'</div><div class="list">'+recent.map(function(b){return row(b,true)}).join('')+'</div>';
+ }
+ if(!shown.length){
+  h+='<div class="empty" style="margin-top:16px">'+B.tr(filter==='mine'&&!q?'No beers of your own yet. Add one with +.':'No beer matches your search.')+'</div>';
+ }else{
+  var brands=[],by={};
+  shown.forEach(function(b){if(!by[b.brand]){by[b.brand]=[];brands.push(b.brand)}by[b.brand].push(b)});
+  brands.forEach(function(br){
+   var g=by[br],f=g[0],tags='';
+   if(g.some(function(b){return b.craft}))tags+='<span class="tag craft">'+B.tr('Craft')+'</span>';
+   if(foreign(f))tags+='<span class="tag">'+B.esc(B.tr(COUNTRY[f.country]||f.country))+'</span>';
+   h+='<div class="bhd">'+B.logo(br,(g.filter(function(b){return b.logo})[0]||{}).logo,40)+'<span class="bn" translate="no">'+B.esc(br)+'</span>'+tags+
+    '<span class="cnt">'+g.length+'</span></div><div class="list">'+g.map(function(b){return row(b,false)}).join('')+'</div>'})
+ }
+ var el=document.getElementById('list');el.innerHTML=h;
+ Array.prototype.forEach.call(el.querySelectorAll('[data-id]'),function(b){b.onclick=function(){pick(b.getAttribute('data-id'))}});
+ Array.prototype.forEach.call(el.querySelectorAll('[data-del]'),function(b){b.onclick=function(){
+  var id=b.getAttribute('data-del');if(A)A.deleteCustomBeer(id);else{data.beers=data.beers.filter(function(x){return x.id!==id});if(data.active===id)data.active=null}
+  load();render()}});
+}
+function pick(id){
+ if(A)A.setActiveBeer(id);else data.active=id||null;
+ load();render();
+ if(navigator.vibrate)try{navigator.vibrate(15)}catch(e){}
+}
+
+/* ---------- own beer ---------- */
+var form=document.getElementById('form');
+function openForm(on){form.classList.toggle('open',on);document.getElementById('fErr').textContent='';
+ if(on){form.reset();document.getElementById('fBrand').focus()}}
+document.getElementById('addBtn').onclick=function(){openForm(!form.classList.contains('open'))};
+document.getElementById('fCancel').onclick=function(){openForm(false)};
+form.onsubmit=function(e){e.preventDefault();
+ var brand=document.getElementById('fBrand').value.trim(),name=document.getElementById('fName').value.trim();
+ if(!brand){document.getElementById('fErr').textContent=B.tr('Fill in the brand.');return}
+ var deg=parseInt(document.getElementById('fDeg').value,10),abv=parseFloat(String(document.getElementById('fAbv').value).replace(',','.'));
+ var o={brand:brand,name:name||brand,nonalc:document.getElementById('fNa').checked,craft:document.getElementById('fCraft').checked,
+  foreign:document.getElementById('fForeign').checked,style:document.getElementById('fStyle').value.trim()};
+ if(deg>=1&&deg<=30)o.degree=deg;
+ if(abv>=0&&abv<=20)o.abv=abv;
+ var id=null;
+ if(A)id=A.addCustomBeer(JSON.stringify(o));
+ else{id='c-'+Date.now();o.id=id;o.custom=true;o.uses=0;o.label=brand+(name&&name!==brand?' '+name:'')+(o.degree?' '+o.degree+'°':'');data.beers.push(o)}
+ if(id){openForm(false);filter='all';q='';document.getElementById('search').value='';pick(id)}};
+
+document.getElementById('search').oninput=function(e){q=e.target.value;render()};
+document.getElementById('back').onclick=function(){if(A)A.close();else history.back()};
+load();render();
+</script>
+</body>
+</html>

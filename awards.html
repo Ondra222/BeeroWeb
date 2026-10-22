@@ -1,0 +1,80 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Awards</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="ui.css">
+<style>
+#banner{margin-top:20px}
+.aw .p i.copper{background:#E8873A}
+.pills{margin-top:18px}
+.list{margin-top:16px;display:flex;flex-direction:column;gap:12px}
+.aw{background:var(--card);border-radius:20px;padding:16px;display:flex;gap:16px;align-items:center}
+.aw-ic{flex:none;display:flex;align-items:center;justify-content:center}
+.aw .m{flex:1;min-width:0}
+.aw .t{font-size:17px;font-weight:700}
+.aw .d{color:var(--muted);font-size:14px;margin-top:1px}
+.aw .p{height:6px;border-radius:3px;background:var(--card2);margin-top:10px;overflow:hidden}
+.aw .p i{display:block;height:100%;border-radius:3px;background:var(--gold)}
+.aw .p i.blue{background:var(--blue)}
+.aw .r{flex:none;color:var(--muted);font-size:14px;text-align:right;min-width:46px}
+.aw.locked .t{color:#C9CDD5}
+.empty{color:var(--muted);text-align:center;padding:30px 10px}
+</style>
+</head>
+<body>
+<div class="page">
+ <div class="h1">Awards</div>
+ <div class="sub" id="sum">0 of 20 unlocked</div>
+ <div id="banner"></div>
+ <div class="pills" id="pills"></div>
+ <div class="list" id="list"></div>
+</div>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var B=window.Beero,res=[],filter='all';
+var FILTERS=[['all','All'],['unlocked','Unlocked'],['locked','Locked'],['kind','Beer types']];
+function when(ts){return B.dm(new Date(ts))}
+function render(){
+ var un=B.unlocked(res);
+ document.getElementById('sum').textContent=un.length+(B.lang==='cs'?' z '+res.length+' odemčeno':' of '+res.length+' unlocked');
+ /* banner: the most recently unlocked award */
+ var last=null;un.forEach(function(r){if(!last||r.at>last.at)last=r});
+ document.getElementById('banner').innerHTML=last?
+  '<div class="unlock"><div class="cap">'+B.awardIcon(last,48)+'</div>'+
+  '<div><div class="k">Achievement unlocked</div><div class="t">'+B.esc(last.t)+'</div><div class="d">'+B.esc(last.d)+'</div></div></div>':
+  '<div class="card muted">Add your first beer to unlock your first award.</div>';
+ document.getElementById('pills').innerHTML=FILTERS.map(function(f){
+  return '<button class="pill light'+(f[0]===filter?' on':'')+'" data-f="'+f[0]+'">'+f[1]+'</button>'}).join('');
+ /* unlocked first (newest first), then locked by progress */
+ var rows=res.slice().sort(function(a,b){
+  if((a.at!==null)!==(b.at!==null))return a.at!==null?-1:1;
+  if(a.at!==null)return b.at-a.at;
+  return b.cur/b.goal-a.cur/a.goal});
+ rows=rows.filter(function(r){return filter==='all'||(filter==='kind'?r.cat==='kind':filter==='unlocked'?r.at!==null:r.at===null)});
+ document.getElementById('list').innerHTML=rows.length?rows.map(function(r){
+  var pct=Math.round(r.cur/r.goal*100),done=r.at!==null;
+  return '<div class="aw'+(done?'':' locked')+'">'+B.awardIcon(r,48)+
+   '<div class="m"><div class="t">'+B.esc(r.t)+'</div><div class="d">'+B.esc(r.d)+'</div>'+
+   '<div class="p"><i class="'+(r.cat==='travel'?'blue':r.cat==='kind'?'copper':'')+'" style="width:'+pct+'%"></i></div></div>'+
+   '<div class="r">'+(done?when(r.at):r.cur+' / '+r.goal)+'</div></div>'}).join(''):
+  '<div class="empty">Nothing here yet.</div>';
+ Array.prototype.forEach.call(document.querySelectorAll('.pill'),function(b){b.onclick=function(){filter=b.getAttribute('data-f');render()}});
+}
+res=B.awards(B.load());B.markSeen(res);
+B.nav('awards');render();
+</script>
+</body>
+</html>

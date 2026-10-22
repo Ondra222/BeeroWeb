@@ -1,0 +1,38 @@
+{
+ "version": 2,
+ "note": "Predvyplneny katalog. id se nesmi menit (odkazuji na nej zapsana piva). Po uprave zvys version, aplikace katalog aktualizuje. degree = stupnovitost (°P), abv = % obj., null = neuvedeno; hodnoty over na etikete. style = anglicky nazev stylu (prelozi se v ui.js). country = kod zeme. craft = remeslny pivovar. logo = obrazek v assets/brands (kdyz chybi, ukaze se pocatecni pismeno znacky).",
+ "beers": [
+  {"id": "pilsner-urquell", "brand": "Pilsner Urquell", "name": "Pilsner Urquell", "degree": 12, "abv": 4.4, "style": "Pale lager", "country": "CZ", "logo": "brands/pilsner-urquell.png"},
+  {"id": "gambrinus-10", "brand": "Gambrinus", "name": "Originál 10", "degree": 10, "abv": 4.3, "style": "Draught", "country": "CZ", "logo": "brands/gambrinus.png"},
+  {"id": "gambrinus-12", "brand": "Gambrinus", "name": "Plná 12", "degree": 12, "abv": null, "style": "Pale lager", "country": "CZ", "logo": "brands/gambrinus.png"},
+  {"id": "kozel-svetly", "brand": "Kozel", "name": "Světlý", "degree": 10, "abv": 4.0, "style": "Draught", "country": "CZ", "logo": "brands/kozel.png"},
+  {"id": "kozel-cerny", "brand": "Kozel", "name": "Černý", "degree": 10, "abv": 3.8, "style": "Dark lager", "country": "CZ", "logo": "brands/kozel.png"},
+  {"id": "budvar-original", "brand": "Budějovický Budvar", "name": "Original", "degree": 12, "abv": 5.0, "style": "Pale lager", "country": "CZ", "logo": "brands/budvar.png"},
+  {"id": "staropramen-10", "brand": "Staropramen", "name": "Světlý", "degree": 10, "abv": null, "style": "Draught", "country": "CZ", "logo": "brands/staropramen.png"},
+  {"id": "staropramen-11", "brand": "Staropramen", "name": "Jedenáctka", "degree": 11, "abv": null, "style": "Lager", "country": "CZ", "logo": "brands/staropramen.png"},
+  {"id": "radegast-10", "brand": "Radegast", "name": "Rázná 10", "degree": 10, "abv": null, "style": "Draught", "country": "CZ", "logo": "brands/radegast.png"},
+  {"id": "radegast-12", "brand": "Radegast", "name": "Ryze hořká 12", "degree": 12, "abv": null, "style": "Pale lager", "country": "CZ", "logo": "brands/radegast.png"},
+  {"id": "bernard-11", "brand": "Bernard", "name": "Sváteční ležák", "degree": 11, "abv": null, "style": "Lager", "country": "CZ", "logo": "brands/bernard.png"},
+  {"id": "krusovice-10", "brand": "Krušovice", "name": "Desítka", "degree": 10, "abv": null, "style": "Draught", "country": "CZ", "logo": "brands/krusovice.png"},
+  {"id": "krusovice-12", "brand": "Krušovice", "name": "Imperial", "degree": 12, "abv": null, "style": "Pale lager", "country": "CZ", "logo": "brands/krusovice.png"},
+  {"id": "svijany-11", "brand": "Svijany", "name": "Máz 11", "degree": 11, "abv": null, "style": "Lager", "country": "CZ", "logo": "brands/svijany.png"},
+  {"id": "birell-svetly", "brand": "Birell", "name": "Světlý", "degree": null, "abv": 0.5, "nonalc": true, "style": "Non-alcoholic", "country": "CZ", "logo": "brands/birell.png"},
+
+  {"id": "raven-sky-apa", "brand": "Raven", "name": "Sky APA", "degree": null, "abv": 5.0, "style": "APA", "country": "CZ", "craft": true, "logo": "brands/raven.png"},
+  {"id": "raven-tropic-edge", "brand": "Raven", "name": "Tropic Edge APA", "degree": null, "abv": 4.7, "style": "APA", "country": "CZ", "craft": true, "logo": "brands/raven.png"},
+  {"id": "zlata-krava-11", "brand": "Zlatá kráva", "name": "11 Farm APA", "degree": 11, "abv": null, "style": "APA", "country": "CZ", "craft": true, "logo": "brands/zlata-krava.png"},
+  {"id": "zlata-krava-12", "brand": "Zlatá kráva", "name": "12 Plnotučná", "degree": 12, "abv": 4.5, "style": "Pale lager", "country": "CZ", "craft": true, "logo": "brands/zlata-krava.png"},
+  {"id": "zlata-krava-14", "brand": "Zlatá kráva", "name": "14 Choco Cow Stout", "degree": 14, "abv": 6.0, "style": "Stout", "country": "CZ", "craft": true, "logo": "brands/zlata-krava.png"},
+  {"id": "matuska-raptor", "brand": "Matuška", "name": "Raptor IPA", "degree": 15, "abv": 6.3, "style": "IPA", "country": "CZ", "craft": true, "logo": "brands/matuska.png"},
+
+  {"id": "heineken", "brand": "Heineken", "name": "Heineken", "degree": null, "abv": 5.0, "style": "Pale lager", "country": "NL", "logo": "brands/heineken.png"},
+  {"id": "guinness-draught", "brand": "Guinness", "name": "Draught", "degree": null, "abv": 4.2, "style": "Stout", "country": "IE", "logo": "brands/guinness.png"},
+  {"id": "stella-artois", "brand": "Stella Artois", "name": "Stella Artois", "degree": null, "abv": null, "style": "Pale lager", "country": "BE", "logo": "brands/stella-artois.png"},
+  {"id": "hoegaarden", "brand": "Hoegaarden", "name": "Witbier", "degree": null, "abv": 4.9, "style": "Witbier", "country": "BE", "logo": "brands/hoegaarden.png"},
+  {"id": "leffe-blonde", "brand": "Leffe", "name": "Blonde", "degree": null, "abv": 6.6, "style": "Belgian blonde", "country": "BE", "logo": "brands/leffe.png"},
+  {"id": "paulaner-hefe", "brand": "Paulaner", "name": "Hefe-Weißbier", "degree": null, "abv": 5.5, "style": "Wheat beer", "country": "DE", "logo": "brands/paulaner.png"},
+  {"id": "erdinger-weiss", "brand": "Erdinger", "name": "Weißbier", "degree": null, "abv": 5.3, "style": "Wheat beer", "country": "DE", "logo": "brands/erdinger.png"},
+  {"id": "carlsberg", "brand": "Carlsberg", "name": "Carlsberg", "degree": null, "abv": 5.0, "style": "Pale lager", "country": "DK", "logo": "brands/carlsberg.png"},
+  {"id": "corona-extra", "brand": "Corona", "name": "Extra", "degree": null, "abv": 4.5, "style": "Pale lager", "country": "MX", "logo": "brands/corona.png"}
+ ]
+}

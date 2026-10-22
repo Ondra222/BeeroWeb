@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Pubs</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="ui.css">
+<style>
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.tile{background:var(--card);border-radius:20px;padding:16px 16px 14px;min-width:0}
+.tile .l{color:var(--muted);font-size:14px}
+.tile .v{font-size:28px;font-weight:700;margin-top:4px;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile .v.sm{font-size:19px;line-height:1.25;margin-top:8px}
+.tile .s{color:var(--muted);font-size:13px;margin-top:2px}
+#search{display:block;width:100%;margin-top:18px;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--line);
+ border-radius:16px;padding:13px 16px;outline:none}
+#search::placeholder{color:var(--faint)}
+#search:focus{border-color:var(--gold)}
+.pills{margin-top:12px}
+#sort .pill{font-size:14px;padding:10px 13px}
+.list{margin-top:14px;display:flex;flex-direction:column;gap:10px}
+.pub{background:var(--card);border-radius:20px;overflow:hidden}
+.pub .top{display:flex;gap:14px;align-items:center;padding:14px 16px;cursor:pointer}
+.rank{flex:none;width:40px;height:40px;border-radius:20px;background:var(--card2);display:flex;align-items:center;justify-content:center;
+ font-weight:700;font-size:15px;color:var(--muted)}
+.rank.r1{background:var(--gold);color:var(--gold-ink)}
+.rank.r2{background:#C9CDD5;color:var(--gold-ink)}
+.rank.r3{background:#C98A55;color:var(--gold-ink)}
+.pub .m{flex:1;min-width:0}
+.pub .t{font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pub .d{color:var(--muted);font-size:13px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pub .n{flex:none;text-align:right}
+.pub .n b{display:block;font-size:22px;font-weight:700;color:var(--gold)}
+.pub .n span{color:var(--muted);font-size:12px}
+.det{display:none;padding:0 16px 16px}
+.pub.open .det{display:block}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:8px;border-top:1px solid var(--line);padding-top:14px}
+.facts div{background:var(--card2);border-radius:14px;padding:10px 12px}
+.facts .l{color:var(--muted);font-size:12px}
+.facts .v{font-size:16px;font-weight:700;margin-top:2px}
+.reg{margin-top:12px;display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted)}
+.reg .p{flex:1;height:6px;border-radius:3px;background:var(--card2);overflow:hidden}
+.reg .p i{display:block;height:100%;background:var(--gold);border-radius:3px}
+.btns{display:flex;gap:8px;margin-top:14px}
+.btns button{flex:1;border:none;border-radius:14px;padding:12px 10px;font-size:14px;font-weight:700;background:var(--gold);color:var(--gold-ink)}
+.btns button.s{background:var(--card2);color:var(--text)}
+.note{color:var(--muted);font-size:13px;text-align:center;margin-top:16px}
+.empty{background:var(--card);border-radius:20px;padding:28px 20px;text-align:center;margin-top:18px}
+.empty b{display:block;font-size:17px;margin-bottom:6px}
+.empty span{color:var(--muted);font-size:14px}
+</style>
+</head>
+<body>
+<div class="page">
+ <div class="h1">Pubs</div>
+ <div class="sub" id="sum">Your pubs</div>
+ <div class="grid">
+  <div class="tile"><div class="l">Pubs visited</div><div class="v gold" id="tPubs">0</div><div class="s" id="tNew">&nbsp;</div></div>
+  <div class="tile"><div class="l">Beers in pubs</div><div class="v" id="tBeers">0</div><div class="s" id="tAvg">&nbsp;</div></div>
+  <div class="tile"><div class="l">Favourite</div><div class="v sm" id="tFav">&ndash;</div><div class="s" id="tFavN">&nbsp;</div></div>
+  <div class="tile"><div class="l">Last visit</div><div class="v sm" id="tLast">&ndash;</div><div class="s" id="tLastD">&nbsp;</div></div>
+ </div>
+ <input id="search" type="search" placeholder="Search pubs or cities" autocomplete="off">
+ <div class="pills" id="sort"></div>
+ <div class="list" id="list"></div>
+ <div class="note" id="note"></div>
+</div>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var B=window.Beero,A=B.A,pubs=[],sort='beers',q='',openKey=null;
+var SORTS=[['beers','Most beers'],['recent','Recent'],['visits','Most visits'],['az','A–Z']];
+function day(ts){return B.dm(new Date(ts))}
+function plural(n,w){return B.n(n,w)}
+var CS=B.lang==='cs';
+
+/* one entry per pub (same name + same place) */
+function build(list){
+ var m={};
+ list.forEach(function(b){var k=B.venueKey(b);if(!k)return;
+  var p=m[k]||(m[k]={key:k,name:b.venue,lat:b.vlat,lng:b.vlng,city:null,beers:0,days:{},first:b.ts,last:b.ts,hours:{}});
+  p.beers++;p.days[b.d]=(p.days[b.d]||0)+1;if(b.city)p.city=b.city;
+  if(b.ts<p.first)p.first=b.ts;if(b.ts>p.last)p.last=b.ts;
+  var h=new Date(b.ts).getDay();p.hours[h]=(p.hours[h]||0)+1});
+ return Object.keys(m).map(function(k){var p=m[k],ds=Object.keys(p.days);
+  p.visits=ds.length;p.best=0;ds.forEach(function(d){if(p.days[d]>p.best)p.best=p.days[d]});
+  var fav=-1,fn=0;Object.keys(p.hours).forEach(function(w){if(p.hours[w]>fn){fn=p.hours[w];fav=+w}});
+  p.favDay=fav<0?'–':B.weekday(fav);
+  return p})}
+
+function summary(all){
+ var inPubs=0,month=B.today().slice(0,7),newM=0,fav=null,last=null;
+ pubs.forEach(function(p){inPubs+=p.beers;if(B.fmt(new Date(p.first)).slice(0,7)===month)newM++;
+  if(!fav||p.beers>fav.beers)fav=p;if(!last||p.last>last.last)last=p});
+ document.getElementById('tPubs').textContent=pubs.length;
+ document.getElementById('tNew').textContent=newM?'+'+newM+(CS?(newM===1?' nová':newM<5?' nové':' nových')+' tento měsíc':' new this month'):' ';
+ document.getElementById('tBeers').textContent=inPubs;
+ document.getElementById('tAvg').textContent=pubs.length?B.dec(inPubs/pubs.reduce(function(a,p){return a+p.visits},0),1)+(CS?' na návštěvu':' per visit'):' ';
+ document.getElementById('tFav').textContent=fav?fav.name:'–';
+ document.getElementById('tFavN').textContent=fav?plural(fav.beers,'beer'):' ';
+ document.getElementById('tLast').textContent=last?last.name:'–';
+ document.getElementById('tLastD').textContent=last?day(last.last):' ';
+ document.getElementById('sum').textContent=pubs.length?plural(pubs.length,'pub')+' · '+plural(inPubs,'beer'):B.tr('Your pubs');
+ var loose=all.length-inPubs;
+ document.getElementById('note').textContent=loose>0?plural(loose,'beer')+(CS?' bez hospody (žádná poblíž nebo vypnutá poloha)':' without a pub (no pub found nearby or location off)'):'';
+}
+
+function render(){
+ document.getElementById('sort').innerHTML=SORTS.map(function(s){return '<button class="pill'+(s[0]===sort?' on':'')+'" data-s="'+s[0]+'">'+s[1]+'</button>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#sort .pill'),function(b){b.onclick=function(){sort=b.getAttribute('data-s');render()}});
+ /* rank is always by beers, whatever the sort */
+ var byBeers=pubs.slice().sort(function(a,b){return b.beers-a.beers||b.last-a.last});
+ byBeers.forEach(function(p,i){p.rank=i+1});
+ var rows=pubs.slice().sort(function(a,b){
+  if(sort==='recent')return b.last-a.last;
+  if(sort==='visits')return b.visits-a.visits||b.beers-a.beers;
+  if(sort==='az')return a.name.localeCompare(b.name);
+  return a.rank-b.rank});
+ var s=q.trim().toLowerCase();
+ if(s)rows=rows.filter(function(p){return p.name.toLowerCase().indexOf(s)>=0||(p.city||'').toLowerCase().indexOf(s)>=0});
+ var el=document.getElementById('list');
+ if(!pubs.length){el.innerHTML='<div class="empty"><b>No pubs yet</b><span>Add a beer in a pub and it shows up here.</span></div>';return}
+ if(!rows.length){el.innerHTML='<div class="empty"><span>'+(CS?'Žádná hospoda neodpovídá „'+B.esc(q)+'“.':'No pub matches “'+B.esc(q)+'”.')+'</span></div>';return}
+ el.innerHTML=rows.map(function(p){
+  var rc=p.rank<=3?' r'+p.rank:'',reg=Math.min(p.visits,10);
+  return '<div class="pub'+(p.key===openKey?' open':'')+'" data-k="'+B.esc(p.key)+'">'+
+   '<div class="top"><div class="rank'+rc+'">'+p.rank+'</div>'+
+   '<div class="m"><div class="t">'+B.esc(p.name)+'</div><div class="d">'+B.esc((p.city?p.city+' · ':'')+plural(p.visits,'visit')+(CS?' · naposledy ':' · last ')+day(p.last))+'</div></div>'+
+   '<div class="n"><b>'+p.beers+'</b><span>'+B.word(p.beers,'beer')+'</span></div></div>'+
+   '<div class="det"><div class="facts">'+
+    '<div><div class="l">First visit</div><div class="v">'+day(p.first)+'</div></div>'+
+    '<div><div class="l">Best night</div><div class="v">'+plural(p.best,'beer')+'</div></div>'+
+    '<div><div class="l">Per visit</div><div class="v">'+B.dec(p.beers/p.visits,1)+'</div></div>'+
+    '<div><div class="l">Usual day</div><div class="v">'+p.favDay+'</div></div></div>'+
+   '<div class="reg"><span>The Regular</span><div class="p"><i style="width:'+reg*10+'%"></i></div><span>'+(reg>=10?'✓':reg+' / 10')+'</span></div>'+
+   '<div class="btns"><button data-a="map">Show on map</button><button class="s" data-a="mapy">Open in Mapy.com</button></div></div></div>'}).join('');
+ Array.prototype.forEach.call(el.querySelectorAll('.pub'),function(row){
+  var p=pubs.filter(function(x){return x.key===row.getAttribute('data-k')})[0];
+  row.querySelector('.top').onclick=function(){openKey=openKey===p.key?null:p.key;render()};
+  row.querySelector('[data-a=map]').onclick=function(){if(A){A.setMapFocus(JSON.stringify({lat:p.lat,lng:p.lng,name:p.name}));A.go('map')}};
+  row.querySelector('[data-a=mapy]').onclick=function(){if(A)A.openUrl('https://mapy.com/fnc/v1/search?query='+encodeURIComponent(p.name)+'&center='+p.lng.toFixed(6)+','+p.lat.toFixed(6)+'&zoom=18')};
+ })}
+
+document.getElementById('search').oninput=function(e){q=e.target.value;render()};
+var all=B.load();pubs=build(all);summary(all);
+B.nav('pubs');render();
+</script>
+</body>
+</html>

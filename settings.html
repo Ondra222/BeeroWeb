@@ -1,0 +1,221 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Settings</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="ui.css">
+<style>
+.page{padding-bottom:40px}
+.hd{display:flex;align-items:center;gap:6px;margin-top:2px}
+#back{border:none;background:none;font-size:26px;line-height:1;padding:6px 10px 6px 0;color:var(--text)}
+h2{font-size:13px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:28px 4px 10px}
+.box{background:var(--card);border-radius:20px;padding:4px 16px}
+.hint{color:var(--muted);font-size:13px;margin:8px 4px 0}
+/* themes */
+.themes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.th{border:2px solid transparent;border-radius:18px;background:var(--card);padding:10px;text-align:left;color:var(--text)}
+.th.on{border-color:var(--gold)}
+.th .sw{height:64px;border-radius:12px;position:relative;overflow:hidden}
+.th .sw i{position:absolute;left:10px;right:10px;top:10px;height:26px;border-radius:8px}
+.th .sw b{position:absolute;left:10px;right:34px;bottom:9px;height:12px;border-radius:6px}
+.th .sw u{position:absolute;right:10px;bottom:9px;width:16px;height:12px;border-radius:4px}
+.th .n{font-weight:700;font-size:15px;margin-top:8px}
+.th .d{color:var(--muted);font-size:12px}
+.th.auto .sw{display:flex}
+.th.auto .sw span{flex:1;position:relative}
+/* rows */
+.row2{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.row2:last-child{border-bottom:none}
+.ic{flex:none;width:38px;height:38px;border-radius:19px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:19px}
+.m{flex:1;min-width:0}
+.t{font-weight:700;font-size:16px}
+.d{color:var(--muted);font-size:13px}
+.d.skip{color:var(--gold)}
+.step{flex:none;display:flex;align-items:center;gap:2px;background:var(--card2);border-radius:14px;padding:3px}
+.step button{width:34px;height:34px;border:none;border-radius:11px;background:none;font-size:20px;font-weight:600;color:var(--text)}
+.step button:disabled{opacity:.25}
+.step span{min-width:28px;text-align:center;font-weight:700;font-size:17px}
+.fixed{flex:none;color:var(--muted);font-size:14px;padding-right:10px}
+.swt{flex:none;width:52px;height:30px;border-radius:15px;background:var(--card2);border:none;position:relative;transition:background .2s}
+.swt:after{content:'';position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:12px;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.swt.on{background:var(--gold)}.swt.on:after{transform:translateX(22px)}
+.dim{opacity:.4;pointer-events:none}
+.notice{margin:12px 0 4px;background:var(--card2);border:1px solid var(--gold);border-radius:14px;padding:12px 14px;font-size:14px}
+.btn{border:none;border-radius:14px;background:var(--gold);color:var(--gold-ink);font-weight:700;font-size:15px;padding:12px 16px}
+.btn.s{background:var(--card2);color:var(--text)}
+.btn.sm{font-size:13px;padding:8px 12px;border-radius:11px;margin-top:8px}
+.two{display:flex;gap:10px;padding:14px 0}
+.two .btn{flex:1}
+#msg{min-height:18px}
+#period .pill,#langs .pill{background:var(--card2)}
+#period .pill.on,#langs .pill.on{background:var(--gold)}
+</style>
+</head>
+<body>
+<div class="page">
+ <div class="hd"><button id="back" aria-label="Back">&#8592;</button><div class="h1" style="margin:0">Settings</div></div>
+
+ <h2>Profile</h2>
+ <div class="box" style="padding:14px 16px">
+  <label class="t" for="uname" style="display:block">Your name</label>
+  <input id="uname" type="text" maxlength="24" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;margin-top:10px;font:inherit;font-size:16px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;outline:none">
+  <div class="d" id="unameMsg" style="min-height:18px;margin-top:6px"></div>
+ </div>
+
+ <h2>Appearance</h2>
+ <div class="themes" id="themes"></div>
+
+ <h2>Language</h2>
+ <div class="box" style="padding:14px 16px"><div class="pills" id="langs"></div></div>
+
+ <h2>Beero's moods</h2>
+ <div class="box" id="moods"></div>
+ <div class="hint">Beero changes mood as the beers add up. Set the same number as the next mood to skip one.
+  <button class="btn s sm" id="moodReset">Reset to default</button></div>
+
+ <h2>Reminders</h2>
+ <div class="box">
+  <div class="row2"><div class="m"><div class="t">Reminders</div><div class="d">A nudge after a number of beers today</div></div><button class="swt" id="rOn" aria-label="Reminders on or off"></button></div>
+  <div id="perm" class="notice" style="display:none">Notifications are off for Beero, so reminders can't pop up.<br><button class="btn sm" id="permBtn">Allow notifications</button></div>
+  <div id="rLevels"></div>
+ </div>
+
+ <h2>Map</h2>
+ <div class="box" style="padding:14px 16px">
+  <div class="t" style="margin-bottom:10px">Show on opening</div>
+  <div class="pills" id="period"></div>
+ </div>
+
+ <h2 id="mkH">Mapy.com</h2>
+ <div class="box" style="padding:14px 16px">
+  <label class="t" for="mkey" id="mkL" style="display:block">Mapy.com API key</label>
+  <input id="mkey" type="text" autocomplete="off" spellcheck="false" style="display:block;width:100%;box-sizing:border-box;margin-top:10px;font:inherit;font-size:15px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:11px 12px">
+  <div class="d" id="mkD" style="margin-top:8px">Optional. With a key the map uses Mapy.com and every beer gets the pub you are in. Free key: developer.mapy.com</div>
+  <div class="d" id="mkMsg" style="min-height:18px;margin-top:6px"></div>
+ </div>
+ <h2>Your data</h2>
+ <div class="box">
+  <div class="row2"><div class="m"><div class="t" id="dataN">0 beers saved</div><div class="d">Stored only on this phone. Back them up before you change phones.</div></div></div>
+  <div class="two"><button class="btn" id="backup">Back up</button><button class="btn s" id="restore">Restore</button></div>
+  <div class="d" id="msg" style="padding-bottom:12px"></div>
+ </div>
+</div>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var B=window.Beero,A=B.A;
+document.getElementById('back').onclick=function(){if(A)A.close()};
+
+/* ---------- profile: name from the welcome screen ---------- */
+(function(){var el=document.getElementById('uname'),m=document.getElementById('unameMsg'),cur=(A&&A.getUserName&&A.getUserName())||'';
+ el.value=cur;
+ el.onchange=function(){var v=el.value.trim();if(!v){el.value=cur;return}
+  if(!A||A.setUserName(v)){cur=v;el.value=v;m.textContent=B.tr('Saved.');setTimeout(function(){m.textContent=''},1800)}};
+ el.onkeydown=function(e){if(e.key==='Enter')el.blur()}})();
+function stepper(key,val,minus,plus){return '<div class="step"><button data-k="'+key+'" data-d="-1" aria-label="Fewer"'+(minus?'':' disabled')+'>−</button><span>'+val+'</span><button data-k="'+key+'" data-d="1" aria-label="More"'+(plus?'':' disabled')+'>+</button></div>'}
+
+/* ---------- appearance ---------- */
+var THEMES=[['night','Night Pub','Dark, the default',['#11141B','#F5F1E7','#F2B233','#1B1F28']],
+ ['daylight','Daylight','Light, easy to read outside',['#F6F1E6','#FFFFFF','#1F3A63','#EFE8DA']],
+ ['hop','Hop Garden','Green like a hop field',['#13221A','#E9F0DC','#E7C24A','#1C3024']],
+ ['stout','Stout','Black, copper and foam',['#0E0B0A','#EBDCC6','#C9783E','#1E1714']],
+ ['auto','Auto','Daylight by day, Night Pub at night',null]];
+var choice=(A&&A.getThemeChoice&&A.getThemeChoice())||'night';
+function sw(c){return '<i style="background:'+c[1]+'"></i><b style="background:'+c[2]+'"></b><u style="background:'+c[3]+'"></u>'}
+function drawThemes(){
+ document.getElementById('themes').innerHTML=THEMES.map(function(t){
+  var inner=t[3]?'<div class="sw" style="background:'+t[3][0]+'">'+sw(t[3])+'</div>':
+   '<div class="sw"><span style="background:'+THEMES[1][3][0]+'">'+sw(THEMES[1][3])+'</span><span style="background:'+THEMES[0][3][0]+'">'+sw(THEMES[0][3])+'</span></div>';
+  return '<button class="th'+(t[0]==='auto'?' auto':'')+(t[0]===choice?' on':'')+'" data-t="'+t[0]+'">'+inner+'<div class="n">'+t[1]+'</div><div class="d">'+t[2]+'</div></button>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('.th'),function(b){b.onclick=function(){
+  var t=b.getAttribute('data-t');if(t===choice)return;choice=t;
+  if(A){A.setTheme(t);A.reload()}else{document.documentElement.setAttribute('data-theme',t==='auto'?'night':t);drawThemes()}}})}
+
+/* ---------- Beero's moods: from how many beers each mood starts ---------- */
+var MOODS=[['💃','Happy dance'],['🪩','Disco'],['🍻','Cheers'],['🫧','Bubbly'],['😍','In love'],
+ ['🌊','Overflowing'],['😵','Spinning'],['🤢','Feeling sick'],['😴','Sleepy'],['🤕','Hangover']];
+var DEF=[2,3,4,5,6,7,9,11,12],th=DEF.slice();
+try{if(A&&A.getMoods)th=JSON.parse(A.getMoods())}catch(e){}
+function range(i){var to=i<th.length?th[i]-1:null,from=i===0?0:th[i-1];
+ if(to!==null&&to<from)return null;                     /* skipped: the next mood starts at the same number */
+ if(to===null)return from+'+ '+B.word(from,'beer');
+ return from===to?B.n(from,'beer'):from+'–'+to+' '+B.word(to,'beer')}
+function drawMoods(){
+ document.getElementById('moods').innerHTML=MOODS.map(function(m,i){
+  var r=range(i),right=i===0?'<div class="fixed">from 0</div>':stepper(i-1,th[i-1],th[i-1]>(i>1?th[i-2]:1),th[i-1]<60);
+  return '<div class="row2"><div class="ic">'+m[0]+'</div><div class="m"><div class="t">'+m[1]+'</div><div class="d'+(r?'':' skip')+'">'+(r||'Skipped')+'</div></div>'+right+'</div>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#moods .step button'),function(b){b.onclick=function(){
+  var k=+b.getAttribute('data-k'),v=th[k]+(+b.getAttribute('data-d'));
+  v=Math.max(k>0?th[k-1]:1,Math.min(60,v));th[k]=v;
+  for(var j=k+1;j<th.length;j++)if(th[j]<th[j-1])th[j]=th[j-1];   /* later moods move up with it */
+  if(A)A.setMoods(JSON.stringify(th));drawMoods()}})}
+document.getElementById('moodReset').onclick=function(){th=DEF.slice();if(A)A.setMoods(JSON.stringify(th));drawMoods()};
+
+/* ---------- reminders (Reminders.kt) ---------- */
+var RL=[['water','💧','Water break','Grab a glass of water'],['slow','🐢','Slow down','Take it easy for a bit'],['home','🏠','Go home','With a button to get an Uber']];
+var rem={on:true,water:4,slow:6,home:8,notifOk:true};
+function remLoad(){try{if(A&&A.getReminders)rem=JSON.parse(A.getReminders())}catch(e){}}
+function remDraw(){
+ document.getElementById('rOn').className='swt'+(rem.on?' on':'');
+ document.getElementById('perm').style.display=rem.on&&!rem.notifOk?'block':'none';
+ var box=document.getElementById('rLevels');box.className=rem.on?'':'dim';
+ box.innerHTML=RL.map(function(l){return '<div class="row2"><div class="ic">'+l[1]+'</div><div class="m"><div class="t">'+l[2]+'</div><div class="d">'+l[3]+'</div></div>'+stepper(l[0],rem[l[0]],rem[l[0]]>1,rem[l[0]]<30)+'</div>'}).join('');
+ Array.prototype.forEach.call(box.querySelectorAll('.step button'),function(b){b.onclick=function(){
+  var k=b.getAttribute('data-k');rem[k]=Math.max(1,Math.min(30,rem[k]+(+b.getAttribute('data-d'))));
+  if(rem.slow<rem.water){if(k==='water')rem.slow=rem.water;else rem.water=rem.slow}
+  if(rem.home<rem.slow){if(k==='home')rem.slow=rem.home;else rem.home=rem.slow}
+  if(rem.slow<rem.water)rem.water=rem.slow;
+  if(A)A.setReminders(JSON.stringify(rem));remDraw()}})}
+document.getElementById('rOn').onclick=function(){rem.on=!rem.on;if(A)A.setReminders(JSON.stringify(rem));remDraw()};
+document.getElementById('permBtn').onclick=function(){if(A&&A.requestNotifications)A.requestNotifications()};
+
+/* ---------- map ---------- */
+var period=(A&&A.getMapPeriod&&A.getMapPeriod())||'month';
+function drawPeriod(){
+ document.getElementById('period').innerHTML=[['day','Today'],['month','This month'],['year','This year']].map(function(p){
+  return '<button class="pill'+(p[0]===period?' on':'')+'" data-p="'+p[0]+'">'+p[1]+'</button>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#period .pill'),function(b){b.onclick=function(){period=b.getAttribute('data-p');if(A)A.setMapPeriod(period);drawPeriod()}})}
+
+/* ---------- data ---------- */
+function drawData(){var n=B.load().length;document.getElementById('dataN').textContent=B.n(n,'beer')+(B.lang==='cs'?' uloženo':' saved')}
+function msg(t){document.getElementById('msg').textContent=t}
+document.getElementById('backup').onclick=function(){msg('');if(A)A.backup()};
+document.getElementById('restore').onclick=function(){msg('');if(A)A.restore()};
+window.onBackupDone=function(ok){msg(B.tr(ok?'Backup saved.':'Could not save the backup. Try another place.'))};
+window.onRestoreDone=function(n){msg(n<0?B.tr('That file is not a Beero backup.'):n===0?B.tr('Nothing new – all those beers are already here.'):B.n(n,'beer')+(B.lang==='cs'?' obnoveno.':' restored.'));drawData()};
+
+/* ---------- language ---------- */
+var lang=B.lang;
+function drawLang(){
+ document.getElementById('langs').innerHTML=[['cs','\u010ce\u0161tina'],['en','English']].map(function(l){
+  return '<button class="pill'+(l[0]===lang?' on':'')+'" data-l="'+l[0]+'">'+l[1]+'</button>'}).join('');
+ Array.prototype.forEach.call(document.querySelectorAll('#langs .pill'),function(b){b.onclick=function(){
+  var l=b.getAttribute('data-l');if(l===lang)return;lang=l;if(A){A.setLang(l);A.reload()}}})}
+
+window.refresh=function(){remLoad();remDraw()};
+drawLang();drawThemes();drawMoods();remLoad();remDraw();drawPeriod();drawData();
+</script>
+<script>
+/* web only: Mapy.com key (in the Android app it is built in from local.properties) */
+(function(){var A=window.Android,cs=window.Beero.lang==='cs',el=document.getElementById('mkey'),m=document.getElementById('mkMsg');
+ if(!A||!A.setMapyKey)return;
+ if(cs){document.getElementById('mkL').textContent='API klíč Mapy.com';
+  document.getElementById('mkD').textContent='Nepovinné. S klíčem mapa používá Mapy.com a ke každému pivu se uloží hospoda, ve které jsi. Klíč zdarma: developer.mapy.com'}
+ el.value=A.getMapyKey()||'';
+ el.onchange=function(){A.setMapyKey(el.value);m.textContent=cs?'Uloženo.':'Saved.';setTimeout(function(){m.textContent=''},1800)}})();
+/* "Stored only on this phone" -> in this browser */
+(function(){var d=document.querySelector('#dataN+.d');if(d)d.textContent=window.Beero.lang==='cs'?'Uloženo jen v tomto prohlížeči. Než ho vymažeš nebo změníš telefon, udělej zálohu.':'Stored only in this browser. Back up before you clear it or change phones.'})();
+</script>
+</body>
+</html>

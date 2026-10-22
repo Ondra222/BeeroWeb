@@ -1,0 +1,73 @@
+/* Beero - shared look for Today, Map, Awards and Stats */
+:root{
+ color-scheme:dark;
+ --bg:#11141B;--card:#1B1F28;--card2:#232833;--line:#2C3240;
+ --text:#F4F1EA;--muted:#9AA1AD;--faint:#5E6573;
+ --gold:#F2B233;--gold-ink:#1A1D24;--blue:#8EC3DA;--grey:#59606E;
+ --cream:#F5F1E7;--navy:#1F3A63;
+ --r:22px;--nav-h:76px;
+ --font:'Outfit',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+/* themes (chosen in Settings; Settings.kt has the matching background colours) */
+:root[data-theme=daylight]{color-scheme:light;
+ --bg:#F6F1E6;--card:#FFFFFF;--card2:#EFE8DA;--line:#E3D9C5;--text:#1E2230;--muted:#6B6658;--faint:#A99F8C;
+ --gold:#1F3A63;--gold-ink:#FFF8EA;--blue:#5E9DB8;--grey:#B9B2A3;--cream:#FFFFFF;--navy:#1F3A63}
+:root[data-theme=hop]{
+ --bg:#13221A;--card:#1C3024;--card2:#26402F;--line:#2F4A38;--text:#EEF3E6;--muted:#9FB3A4;--faint:#61786A;
+ --gold:#E7C24A;--gold-ink:#16251C;--blue:#8EC3DA;--grey:#5A6E60;--cream:#E9F0DC;--navy:#1E3B2A}
+:root[data-theme=stout]{
+ --bg:#0E0B0A;--card:#1E1714;--card2:#2E241F;--line:#3A2E27;--text:#F3E8DA;--muted:#A2938A;--faint:#6B5D54;
+ --gold:#C9783E;--gold-ink:#1C110B;--blue:#8EC3DA;--grey:#5E534C;--cream:#EBDCC6;--navy:#3A2416}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);-webkit-user-select:none;user-select:none}
+button{font-family:inherit;color:inherit;cursor:pointer}
+.page{padding:22px 20px calc(var(--nav-h) + 24px)}
+.h1{font-size:30px;font-weight:700;letter-spacing:-.4px;margin:6px 0 2px}
+.sub{color:var(--muted);font-size:15px}
+.card{background:var(--card);border-radius:var(--r);padding:16px 18px}
+.row{display:flex;align-items:center}
+.gold{color:var(--gold)}
+.muted{color:var(--muted)}
+
+/* pills / segmented filters */
+.pills{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.pills::-webkit-scrollbar{display:none}
+.pill{flex:none;border:none;background:var(--card);color:var(--muted);font-size:15px;font-weight:600;padding:11px 16px;border-radius:16px}
+.pill.on{background:var(--gold);color:var(--gold-ink)}
+.pill.light.on{background:var(--cream);color:var(--gold-ink)}
+
+/* bottom navigation */
+#tabbar{position:fixed;left:0;right:0;bottom:0;height:var(--nav-h);background:var(--bg);border-top:1px solid var(--line);
+ display:flex;z-index:2000;padding-bottom:env(safe-area-inset-bottom)}
+#tabbar button{flex:1;border:none;background:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+ color:var(--muted);font-size:13px;font-weight:600}
+#tabbar button.on{color:var(--gold)}
+#tabbar svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* bar charts */
+.bars{display:flex;align-items:flex-end;gap:10px;height:80px}
+.bars .b{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%}
+.bars .b i{display:block;width:100%;border-radius:8px;background:var(--card2);min-height:10px}
+.bars .b.on i{background:var(--gold)}
+.bars .b span{font-size:11px;color:var(--faint);margin-top:6px}
+.bars .b{position:relative;cursor:pointer}
+.bars .b.sel i{box-shadow:0 0 0 2px var(--text)}
+.bars .tip{position:absolute;z-index:5;white-space:nowrap;background:var(--text);color:var(--gold-ink);font-size:13px;font-weight:600;
+ padding:6px 10px;border-radius:10px;pointer-events:none;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+.bars .tip b{font-weight:800}
+
+/* achievement banner */
+.unlock{background:var(--gold);color:var(--gold-ink);border-radius:var(--r);padding:16px 18px;display:flex;gap:14px;align-items:center}
+.unlock .ic{flex:none;width:44px;height:44px;border-radius:22px;background:var(--gold-ink);display:flex;align-items:center;justify-content:center}
+.unlock .cap{flex:none;width:60px;height:60px;border-radius:30px;background:var(--gold-ink);display:flex;align-items:center;justify-content:center}
+.unlock .k{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase}
+.unlock .t{font-size:18px;font-weight:700;margin-top:1px}
+.unlock .d{font-size:14px;opacity:.85}
+.toast{position:fixed;left:16px;right:16px;top:16px;z-index:3000;transform:translateY(-140%);transition:transform .35s cubic-bezier(.2,.9,.3,1.2);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.toast.show{transform:none}
+
+/* brand logo tile (catalogue, Today) */
+.blogo{flex:none;position:relative;display:inline-flex;align-items:center;justify-content:center;border-radius:14px;overflow:hidden;
+ background:var(--grey);color:#FFF8EA;font-weight:800;line-height:1;letter-spacing:-.5px}
+.blogo .ring{position:absolute;inset:3px;border:1.5px solid rgba(255,248,234,.35);border-radius:11px}
+.blogo img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#fff;padding:4px;box-sizing:border-box}

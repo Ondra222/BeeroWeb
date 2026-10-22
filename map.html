@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Beer map</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="ui.css">
+<style>
+html,body{height:100%;overflow:hidden}
+body{display:flex;flex-direction:column}
+#head{flex:none;padding:22px 20px 14px;background:var(--bg);position:relative;z-index:1100}
+#per{margin-top:14px;background:var(--card);border-radius:18px;display:flex;align-items:center;justify-content:space-between;padding:6px}
+#per button{border:none;background:none;font-size:24px;line-height:1;padding:8px 16px;color:var(--text)}
+#per button[disabled]{opacity:.25}
+#plabel{font-size:17px;font-weight:700}
+#range{display:none;margin-top:14px;gap:10px;align-items:center;color:var(--muted);font-size:14px}
+#range input{flex:1;min-width:0;font:inherit;font-size:15px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px;color-scheme:dark}
+#wrap{flex:1;min-height:0;position:relative;margin-bottom:var(--nav-h)}
+#map{position:absolute;inset:0;background:#e9e5dc}
+#sumcard{position:absolute;left:16px;right:16px;bottom:16px;z-index:1000;background:var(--card);border-radius:22px;padding:16px 20px;box-shadow:0 8px 24px rgba(0,0,0,.35)}
+#sumcard .row{justify-content:space-between}
+#sumcard .city{font-size:19px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-right:10px}
+#sumcard .when{color:var(--muted);font-size:14px;flex:none}
+#sumcard .nums{display:flex;margin-top:12px}
+#sumcard .nums div{flex:1}
+#sumcard .v{font-size:26px;font-weight:700;line-height:1.1}
+#sumcard .l{color:var(--muted);font-size:13px}
+#hint{position:absolute;left:50%;transform:translateX(-50%);top:14px;z-index:1000;font-size:13px;font-weight:600;padding:7px 14px;border-radius:14px;background:rgba(17,20,27,.88);color:var(--text);display:none;white-space:nowrap}
+#me{position:absolute;right:16px;bottom:150px;z-index:1000;width:44px;height:44px;border-radius:22px;border:none;background:var(--card);color:var(--gold);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#empty{position:absolute;left:24px;right:24px;top:30%;z-index:1000;text-align:center;font-size:15px;padding:14px;border-radius:16px;background:rgba(17,20,27,.92);color:var(--text);display:none}
+/* markers */
+/* pint marker: the beer level rises with the count, the foam stays inside the glass */
+.pint{position:absolute;left:0;top:0;transform:translate(-50%,-100%);display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3))}
+.pint svg{display:block}
+.pint b{margin-top:-2px;min-width:26px;height:18px;padding:0 7px;border-radius:9px;background:#1A1D24;color:#fff;font:700 12px/18px var(--font);text-align:center}
+.clu{width:52px;height:52px;border-radius:26px;background:#1B1F28;border:3px solid var(--gold);color:#fff;display:flex;align-items:center;justify-content:center;font:700 17px var(--font);box-shadow:0 3px 10px rgba(0,0,0,.35)}
+.pub{width:28px;height:28px;border-radius:14px;background:#1B1F28;border:2px solid var(--gold);box-shadow:0 1px 5px rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center}
+.medot{width:16px;height:16px;border-radius:8px;background:#2A7BE4;border:3px solid #fff;box-shadow:0 0 0 6px rgba(42,123,228,.22)}
+/* dark popups */
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--card);color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.4)}
+.leaflet-popup-content-wrapper{border-radius:18px}
+.leaflet-popup-content{margin:14px 16px}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-container{font-family:var(--font)}
+.pp{font-size:14px;line-height:1.35;min-width:200px}
+.pp .t{font-weight:700;font-size:17px;margin-bottom:2px;padding-right:14px}
+.pp .l{color:var(--muted);font-size:13px}
+.pp .n{margin-top:8px;font-weight:700;color:var(--gold)}
+.pp .btns{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.pp button{font:700 13px var(--font);padding:9px 12px;border-radius:12px;border:none;background:var(--gold);color:#1A1D24}
+.pp button.s{background:var(--card2);color:var(--text)}
+.leaflet-control-attribution{font-size:10px}
+</style>
+</head>
+<body>
+<div id="head">
+ <div class="pills" id="modes"></div>
+ <div id="per"><button id="prev" aria-label="Previous">&lsaquo;</button><div id="plabel"></div><button id="next" aria-label="Next">&rsaquo;</button></div>
+ <div id="range"><input type="date" id="d1"><span>to</span><input type="date" id="d2"></div>
+</div>
+<div id="wrap">
+ <div id="map"></div>
+ <div id="hint"></div>
+ <div id="empty"></div>
+ <button id="me" aria-label="My location"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M21 3 3 10.5l7.4 2.1L12.5 20z"/></svg></button>
+ <div id="sumcard">
+  <div class="row"><div class="city" id="scity">&ndash;</div><div class="when" id="swhen"></div></div>
+  <div class="nums">
+   <div><div class="v gold" id="sbeers">0</div><div class="l">beers</div></div>
+   <div><div class="v" id="svenues">0</div><div class="l">venues</div></div>
+   <div><div class="v" id="sthird">&ndash;</div><div class="l" id="sthirdl">first beer</div></div>
+  </div>
+ </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var A=window.Android||null,B=window.Beero;
+var MAPY_KEY=(A&&typeof A.getMapyKey==='function'&&A.getMapyKey())||'';
+var esc=B.esc,fmt=B.fmt;
+
+/* ---- links to Mapy.com (opened outside the app) ---- */
+var LINKS=[];
+function openUrl(u){if(A&&typeof A.openUrl==='function')A.openUrl(u);else window.open(u,'_blank')}
+window._open=function(i){if(LINKS[i])openUrl(LINKS[i])};
+function btn(label,url,cls){LINKS.push(url);return '<button'+(cls?' class="'+cls+'"':'')+' onclick="_open('+(LINKS.length-1)+')">'+label+'</button>'}
+function mapyUrl(name,lat,lng){return 'https://mapy.com/fnc/v1/search?query='+encodeURIComponent(name)+'&center='+lng.toFixed(6)+','+lat.toFixed(6)+'&zoom=18'}
+function routeUrl(lat,lng){return 'https://mapy.com/fnc/v1/route?end='+lng.toFixed(6)+','+lat.toFixed(6)+'&routeType=foot_fast'}
+function placeButtons(name,lat,lng){return '<div class="btns">'+btn('Open in Mapy.com',mapyUrl(name,lat,lng))+btn('Directions',routeUrl(lat,lng),'s')+'</div>'}
+
+/* ---- period: Day / Month / Year / Range ---- */
+var MODES=[['day','Day'],['month','Month'],['year','Year'],['range','Range']];
+var mode='month',cur=new Date(),all=[],inPeriod=[],pts=[],map=null,layer=null,pubLayer=null,meMarker=null,first=true;
+document.getElementById('modes').innerHTML=MODES.map(function(m){return '<button class="pill" data-m="'+m[0]+'">'+m[1]+'</button>'}).join('');
+Array.prototype.forEach.call(document.querySelectorAll('#modes .pill'),function(b){b.onclick=function(){setMode(b.getAttribute('data-m'))}});
+document.getElementById('prev').onclick=function(){shift(-1)};
+document.getElementById('next').onclick=function(){shift(1)};
+document.getElementById('d1').onchange=load;document.getElementById('d2').onchange=load;
+function setMode(m){mode=m;cur=new Date();
+ Array.prototype.forEach.call(document.querySelectorAll('#modes .pill'),function(b){b.className='pill'+(b.getAttribute('data-m')===m?' on':'')});
+ document.getElementById('per').style.display=m==='range'?'none':'flex';
+ document.getElementById('range').style.display=m==='range'?'flex':'none';
+ if(m==='range'&&!document.getElementById('d1').value){var t=new Date(),f=new Date();f.setDate(t.getDate()-6);document.getElementById('d1').value=fmt(f);document.getElementById('d2').value=fmt(t)}
+ load()}
+function shift(k){if(mode==='day')cur.setDate(cur.getDate()+k);else if(mode==='month')cur=new Date(cur.getFullYear(),cur.getMonth()+k,1);else cur=new Date(cur.getFullYear()+k,0,1);load()}
+function range(){var y=cur.getFullYear(),m=cur.getMonth();
+ if(mode==='day')return [fmt(cur),fmt(cur)];
+ if(mode==='month')return [fmt(new Date(y,m,1)),fmt(new Date(y,m+1,0))];
+ if(mode==='year')return [y+'-01-01',y+'-12-31'];
+ var a=document.getElementById('d1').value||'0000-01-01',b=document.getElementById('d2').value||'9999-12-31';return a<=b?[a,b]:[b,a]}
+function label(){var y=cur.getFullYear();
+ if(mode==='day')return B.nice(fmt(cur))+(y!==new Date().getFullYear()?' '+y:'');
+ if(mode==='month')return B.monthYear(cur);
+ if(mode==='year')return ''+y;
+ var r=range();return B.nice(r[0])+' – '+B.nice(r[1])}
+function shortLabel(){var y=cur.getFullYear();
+ if(mode==='day')return B.nice(fmt(cur));
+ if(mode==='month')return B.monShortYear(cur);
+ if(mode==='year')return ''+y;
+ return label()}
+
+/* ---- summary card ---- */
+function summary(){
+ var cities={},venues={},days={},top=null,topN=0;
+ inPeriod.forEach(function(b){if(b.city){cities[b.city]=(cities[b.city]||0)+1;if(cities[b.city]>topN){topN=cities[b.city];top=b.city}}
+  var v=B.venueKey(b);if(v)venues[v]=1;days[b.d]=1});
+ document.getElementById('scity').textContent=top||B.tr(inPeriod.length?'Unknown place':'No beers');
+ document.getElementById('swhen').textContent=mode==='range'?'':shortLabel();
+ document.getElementById('sbeers').textContent=inPeriod.length;
+ document.getElementById('svenues').textContent=Object.keys(venues).length;
+ if(mode==='day'){document.getElementById('sthird').textContent=inPeriod.length?B.hhmm(inPeriod[0].ts):'–';document.getElementById('sthirdl').textContent=B.tr('first beer')}
+ else{document.getElementById('sthird').textContent=Object.keys(days).length;document.getElementById('sthirdl').textContent=B.tr('active days')}}
+
+/* ---- my beers: mugs with counts, merged into a ring when zoomed out ---- */
+/* glass interior is a trapezoid; beer and foam are clipped to its sides by computing x at each height */
+function pintSvg(n){
+ var T=6,Bm=35,L0=6.2,R0=25.8,L1=8.4,R1=23.6;                 /* inner top/bottom y, inner left/right x at top and bottom */
+ function xl(y){return L0+(L1-L0)*(y-T)/(Bm-T)}function xr(y){return R0+(R1-R0)*(y-T)/(Bm-T)}
+ var full=Math.min(1,0.25+0.75*(Math.min(n,10)-1)/9);          /* 1 beer = quarter full, 10+ = full */
+ var foam=Math.min(6,3.5+n*0.25),top=Bm-(Bm-T-2.2-foam)*full,f=top-foam;   /* room for the foam is reserved, so it never spills over */
+ var beer='M'+xl(top).toFixed(2)+' '+top.toFixed(2)+'L'+xr(top).toFixed(2)+' '+top.toFixed(2)+'L'+R1+' '+(Bm-2)+'Q'+R1+' '+Bm+' '+(R1-2)+' '+Bm+'H'+(L1+2)+'Q'+L1+' '+Bm+' '+L1+' '+(Bm-2)+'Z';
+ /* foam: flat band hugging the glass walls with a soft bumpy top, never wider than the glass */
+ var fl=xl(f),fr=xr(f),w=fr-fl,bump='';for(var i=0;i<4;i++){var x0=fl+w*i/4,x1=fl+w*(i+1)/4;bump+='Q'+((x0+x1)/2).toFixed(2)+' '+(f-1.8).toFixed(2)+' '+x1.toFixed(2)+' '+f.toFixed(2)}
+ var foamP='M'+xl(top).toFixed(2)+' '+top.toFixed(2)+'L'+fl.toFixed(2)+' '+f.toFixed(2)+bump+'L'+xr(top).toFixed(2)+' '+top.toFixed(2)+'Z';
+ return '<svg width="38" height="42" viewBox="0 0 38 42">'+
+  '<path d="M4 3.5h24l-2.6 31.2a3.4 3.4 0 0 1-3.4 3.1H10a3.4 3.4 0 0 1-3.4-3.1z" fill="#fff" fill-opacity=".85"/>'+
+  '<path d="'+beer+'" fill="#F2B233"/>'+
+  '<path d="'+foamP+'" fill="#FFF8EA" stroke="#E5D6B8" stroke-width=".6"/>'+
+  '<path d="M27.4 11h3.6a4 4 0 0 1 4 4v7.5a4 4 0 0 1-4 4h-5" fill="none" stroke="#1A1D24" stroke-width="2.4"/>'+
+  '<path d="M4 3.5h24l-2.6 31.2a3.4 3.4 0 0 1-3.4 3.1H10a3.4 3.4 0 0 1-3.4-3.1z" fill="none" stroke="#1A1D24" stroke-width="2.2" stroke-linejoin="round"/>'+
+  '<path d="M10.5 12v16" stroke="#fff" stroke-opacity=".6" stroke-width="1.8" stroke-linecap="round"/></svg>'}
+function mug(n){return L.divIcon({className:'',html:'<div class="pint">'+pintSvg(n)+'<b>'+n+'</b></div>',iconSize:[0,0],iconAnchor:[0,0],popupAnchor:[0,-58]})}
+function ring(n){return L.divIcon({className:'',html:'<div class="clu">'+n+'</div>',iconSize:[52,52],iconAnchor:[26,26],popupAnchor:[0,-24]})}
+function posOf(p){return p.venue&&p.vlat!=null?[p.vlat,p.vlng]:[p.lat,p.lng]}
+function render(fit){
+ if(!map)return;
+ layer.clearLayers();
+ var z=map.getZoom(),cells={};
+ pts.forEach(function(p){
+  var ll=posOf(p),key=p.venue&&p.vlat!=null?'v|'+p.venue+'|'+ll[0].toFixed(4)+'|'+ll[1].toFixed(4):'p|'+ll[0].toFixed(3)+'|'+ll[1].toFixed(3);
+  var q=map.project(ll,z),k=Math.floor(q.x/64)+'_'+Math.floor(q.y/64);
+  var c=cells[k]||(cells[k]={n:0,la:0,ln:0,places:{},names:{},ds:[],pts:[]});
+  c.n++;c.la+=ll[0];c.ln+=ll[1];c.places[key]=1;var nm=p.venue||p.city;if(nm)c.names[nm]=1;c.ds.push(p.ts);c.pts.push(ll)});
+ Object.keys(cells).forEach(function(k){var c=cells[k],ll=[c.la/c.n,c.ln/c.n],multi=Object.keys(c.places).length>1;
+  var m=L.marker(ll,{icon:multi?ring(c.n):mug(c.n),zIndexOffset:500});
+  m.on('click',function(){
+   var b=L.latLngBounds(c.pts);
+   if(multi&&map.getZoom()<18){map.fitBounds(b,{padding:[70,70],maxZoom:18});return}
+   c.ds.sort();var names=Object.keys(c.names),one=names.length===1;
+   var d0=new Date(c.ds[0]),d1=new Date(c.ds[c.ds.length-1]),f=function(d){return B.dm(d,false)};
+   var when=fmt(d0)===fmt(d1)?f(d0)+(B.lang==='cs'?' · první v ':' · first at ')+B.hhmm(c.ds[0]):f(d0)+' → '+f(d1);
+   var h='<div class="pp"><div class="t">'+esc(names.join(', ')||'Unknown place')+'</div><div class="l">'+esc(when)+'</div>'+
+    '<div class="n">🍺 '+B.n(c.n,'beer')+'</div>';
+   if(one&&pts.some(function(p){return p.venue===names[0]}))h+=placeButtons(names[0],ll[0],ll[1]);
+   L.popup().setLatLng(ll).setContent(h+'</div>').openOn(map)});
+  m.addTo(layer)});
+ var e=document.getElementById('empty');
+ if(!all.length&&A&&!A.hasLocationPermission()){e.style.display='block';e.textContent='Location is off, so beers are not placed on the map. Allow location for Beero in the phone settings.'}
+ else e.style.display='none';
+ if(fit){
+  if(pts.length)map.fitBounds(L.latLngBounds(pts.map(posOf)),{padding:[70,70],maxZoom:17,paddingBottomRight:[70,160]});
+  else if(first)goToMe(false)}
+ first=false}
+
+/* ---- pubs from Mapy.com (from zoom 15, like POIs on mapy.com) ---- */
+var PUB_Q=['hospoda','pivnice','restaurace','pub','bar'],PUB_ZOOM=15,pubCache={},pubTimer=null,pubSeq=0;
+function hint(t){var h=document.getElementById('hint');h.textContent=t||'';h.style.display=t?'block':'none'}
+function pubIcon(){return L.divIcon({className:'',iconSize:[28,28],iconAnchor:[14,14],popupAnchor:[0,-12],
+ html:'<div class="pub"><svg width="14" height="16" viewBox="0 0 14 16"><path d="M2 4h8l-1 10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z" fill="#F2B233"/><path d="M10 6.5h1.5A1.5 1.5 0 0 1 13 8v1.6a1.5 1.5 0 0 1-1.5 1.5H9.7" fill="none" stroke="#F2B233" stroke-width="1.4"/><path d="M1.5 4.5c0-2 2-2.6 3-1.6.8-1.4 3-1.4 3.8 0 1.3-.5 2.4.6 1.9 1.6z" fill="#fff"/></svg></div>'})}
+function myBeersAt(name,lat,lng){return all.some(function(p){return p.venue===name&&p.vlat!=null&&Math.abs(p.vlat-lat)<0.0003&&Math.abs(p.vlng-lng)<0.0004})}
+function schedulePubs(){clearTimeout(pubTimer);pubTimer=setTimeout(loadPubs,450)}
+function loadPubs(){
+ if(!map)return;
+ if(!MAPY_KEY){pubLayer.clearLayers();hint('Add a Mapy.com API key to see pubs');return}
+ if(map.getZoom()<PUB_ZOOM){pubLayer.clearLayers();hint('Zoom in to see pubs');return}
+ hint('Loading pubs…');
+ var b=map.getBounds().pad(0.1),r=function(x){return (Math.round(x*500)/500).toFixed(3)};
+ var box='BOX('+r(b.getWest()-0.001)+','+r(b.getSouth()-0.001)+','+r(b.getEast()+0.001)+','+r(b.getNorth()+0.001)+')';
+ var seq=++pubSeq;
+ Promise.all(PUB_Q.map(function(q){
+  var url='https://api.mapy.com/v1/geocode?lang=cs&type=poi&limit=15&query='+encodeURIComponent(q)+'&locality='+encodeURIComponent(box)+'&apikey='+encodeURIComponent(MAPY_KEY);
+  if(pubCache[url])return Promise.resolve(pubCache[url]);
+  return fetch(url).then(function(res){return res.ok?res.json():{items:[]}})
+   .then(function(j){var it=(j&&j.items)||[];pubCache[url]=it;return it}).catch(function(){return []});
+ })).then(function(lists){
+  if(seq!==pubSeq)return;
+  pubLayer.clearLayers();
+  var seen={},count=0;
+  lists.forEach(function(list){list.forEach(function(it){
+   if(!it.position||!it.name)return;
+   var la=it.position.lat,ln=it.position.lon,k=it.name.toLowerCase()+'|'+la.toFixed(4)+'|'+ln.toFixed(4);
+   if(seen[k])return;seen[k]=1;
+   if(myBeersAt(it.name,la,ln))return; /* already shown as a beer mug */
+   count++;
+   var m=L.marker([la,ln],{icon:pubIcon(),zIndexOffset:-500,title:it.name});
+   m.on('click',function(){
+    var mine=all.filter(function(p){return p.venue===it.name}).length;
+    var h='<div class="pp"><div class="t">'+esc(it.name)+'</div><div class="l">'+esc([it.label,it.location].filter(Boolean).join(' · '))+'</div>'+
+     '<div class="n">'+(mine?'🍺 '+B.n(mine,'beer')+(B.lang==='cs'?' celkem':' in total'):B.tr('No beers here yet'))+'</div>'+placeButtons(it.name,la,ln)+'</div>';
+    L.popup().setLatLng([la,ln]).setContent(h).openOn(map)});
+   m.addTo(pubLayer)})});
+  hint(count?'':'No pubs found here');
+  if(!count)setTimeout(function(){if(seq===pubSeq)hint('')},2500);
+ })}
+
+/* ---- my position ---- */
+function goToMe(animate){
+ var s=A&&typeof A.getMyLocation==='function'?A.getMyLocation():'';
+ if(!s){if(animate){hint('Location not available');setTimeout(function(){hint('')},2000)}return}
+ var ll=JSON.parse(s);
+ if(!meMarker)meMarker=L.marker(ll,{icon:L.divIcon({className:'',html:'<div class="medot"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false,zIndexOffset:1000}).addTo(map);
+ else meMarker.setLatLng(ll);
+ map.setView(ll,17,{animate:!!animate})}
+document.getElementById('me').onclick=function(){goToMe(true)};
+
+function load(){
+ var r=range();
+ document.getElementById('plabel').textContent=label();
+ var nextStart;if(mode==='day'){var d=new Date(cur);d.setDate(d.getDate()+1);nextStart=fmt(d)}
+ else if(mode==='month')nextStart=fmt(new Date(cur.getFullYear(),cur.getMonth()+1,1));else nextStart=(cur.getFullYear()+1)+'-01-01';
+ document.getElementById('next').disabled=nextStart>B.today();
+ inPeriod=B.inRange(all,r[0],r[1]);
+ pts=inPeriod.filter(function(p){return p.lat!=null||p.vlat!=null});
+ summary();render(true);schedulePubs()}
+
+B.nav('map');
+all=B.load();
+if(!window.L){var e=document.getElementById('empty');e.style.display='block';e.textContent='Could not load the map. Check your internet connection.';
+ setMode('month')}
+else{
+ map=L.map('map',{zoomControl:false,attributionControl:false}).setView([49.8,15.5],7);
+ L.control.attribution({position:'topright',prefix:false}).addTo(map);
+ if(MAPY_KEY){
+  L.tileLayer('https://api.mapy.com/v1/maptiles/basic/256/{z}/{x}/{y}?apikey='+encodeURIComponent(MAPY_KEY),{
+   minZoom:0,maxZoom:19,attribution:'<a href="https://api.mapy.com/copyright" target="_blank">&copy; Seznam.cz a.s. a další</a>'}).addTo(map);
+  var Logo=L.Control.extend({options:{position:'topleft'},onAdd:function(){
+   var d=L.DomUtil.create('div'),a=L.DomUtil.create('a','',d);a.setAttribute('href','https://mapy.com/');a.setAttribute('target','_blank');
+   a.innerHTML='<img src="https://api.mapy.com/img/api/logo.svg" style="width:70px;display:block">';L.DomEvent.disableClickPropagation(a);return d}});
+  new Logo().addTo(map);
+ }else{
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; OpenStreetMap contributors'}).addTo(map);
+ }
+ layer=L.layerGroup().addTo(map);
+ pubLayer=L.layerGroup().addTo(map);
+ map.on('zoomend',function(){render(false)});
+ map.on('moveend',schedulePubs);
+ /* "Show on map" from the Pubs tab: show all beers and zoom to that pub */
+ var fx=null;try{fx=A&&A.takeMapFocus?JSON.parse(A.takeMapFocus()||'null'):null}catch(e){fx=null}
+ if(fx&&all.length){document.getElementById('d1').value=all[0].d;document.getElementById('d2').value=B.today();setMode('range');
+  map.setView([fx.lat,fx.lng],18,{animate:false});
+  setTimeout(function(){layer.eachLayer(function(m){var ll=m.getLatLng();if(Math.abs(ll.lat-fx.lat)<0.0004&&Math.abs(ll.lng-fx.lng)<0.0006)m.fire('click')})},350)}
+ else setMode((A&&A.getMapPeriod&&A.getMapPeriod())||'month');
+}
+</script>
+</body>
+</html>

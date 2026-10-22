@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Welcome</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#11141B">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Beero">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="ui.css">
+<style>
+html,body{min-height:100%}
+body{-webkit-user-select:auto;user-select:auto}
+.wrap{min-height:100vh;box-sizing:border-box;padding:18px 22px 28px;display:flex;flex-direction:column}
+.top{display:flex;justify-content:flex-end}
+#langs{display:flex;gap:6px}
+#langs .pill{font-size:13px;padding:8px 12px;border-radius:12px}
+.hero{display:flex;flex-direction:column;align-items:center;text-align:center;margin-top:4px}
+.hero img{width:184px;height:184px;object-fit:contain}
+.hero .h1{margin:0}
+.hero .h1 span{color:var(--gold)}
+.hero .sub{margin-top:6px;max-width:300px}
+form{display:flex;flex-direction:column;gap:14px;margin-top:26px}
+.lbl{font-size:15px;font-weight:600}
+#name{display:block;width:100%;box-sizing:border-box;margin-top:8px;font:inherit;font-size:18px;color:var(--text);background:var(--card);
+ border:1px solid var(--line);border-radius:16px;padding:15px 16px;outline:none;-webkit-user-select:text;user-select:text}
+#name::placeholder{color:var(--faint)}
+#name:focus{border-color:var(--gold)}
+.age{display:flex;gap:14px;align-items:flex-start;background:var(--card);border-radius:20px;padding:16px;cursor:pointer}
+.age input{flex:none;width:24px;height:24px;margin:1px 0 0;accent-color:var(--gold)}
+.age b{display:block;font-size:16px}
+.age span{display:block;color:var(--muted);font-size:14px;margin-top:4px;line-height:1.35}
+#go{border:none;background:var(--gold);color:var(--gold-ink);font-size:19px;font-weight:700;padding:18px;border-radius:30px;margin-top:6px;transition:opacity .2s}
+#go:disabled{opacity:.35}
+#minor{border:none;background:none;color:var(--muted);font-size:14px;padding:10px;text-decoration:underline}
+.foot{margin-top:auto;padding-top:18px;text-align:center;color:var(--faint);font-size:13px}
+/* under 18 */
+#no{display:none;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:12px}
+#no .h1{font-size:26px}
+#no .sub{max-width:300px}
+#no button{border:none;background:var(--card2);color:var(--text);font-size:16px;font-weight:700;padding:15px 28px;border-radius:24px;margin-top:10px}
+.wrap.blocked #yes{display:none}
+.wrap.blocked #no{display:flex}
+</style>
+</head>
+<body>
+<div class="wrap" id="wrap">
+ <div class="top"><div id="langs"></div></div>
+ <div id="yes">
+  <div class="hero">
+   <img id="mascot" src="beero.png" alt="">
+   <div class="h1">Hi, I'm Beero<span>.</span></div>
+   <div class="sub">I'll keep count of your beers, pubs and awards. First, a couple of quick things.</div>
+  </div>
+  <form id="f" autocomplete="off" novalidate>
+   <label class="lbl" for="name">What should I call you?</label>
+   <input id="name" type="text" maxlength="24" placeholder="Your name or nickname" autocapitalize="words" enterkeyhint="done">
+   <label class="age"><input type="checkbox" id="adult"><div><b>I am 18 or older</b><span>Beero is about alcohol, so it is for adults only. Please drink responsibly.</span></div></label>
+   <button type="submit" id="go" disabled>Let's go</button>
+   <button type="button" id="minor">I'm under 18</button>
+  </form>
+ </div>
+ <div id="no">
+  <div class="h1">Sorry, Beero is for adults only</div>
+  <div class="sub">You need to be 18 or older to use this app. Come back when you are.</div>
+  <button type="button" id="close">Close the app</button>
+ </div>
+ <div class="foot">Drink responsibly</div>
+</div>
+<script src="android.js"></script>
+<script src="ui.js"></script>
+<script>
+var B=window.Beero,A=B.A;
+var nameEl=document.getElementById('name'),adult=document.getElementById('adult'),go=document.getElementById('go');
+/* mascot: from the app's resources; in a plain browser fall back to nothing */
+document.getElementById('mascot').onerror=function(){this.style.visibility='hidden'};
+function upd(){go.disabled=!(nameEl.value.trim()&&adult.checked)}
+nameEl.oninput=upd;adult.onchange=upd;
+document.getElementById('f').onsubmit=function(e){e.preventDefault();upd();if(go.disabled)return;
+ var ok=A?A.finishWelcome(nameEl.value.trim()):(window.__done=nameEl.value.trim(),true);
+ if(!ok)nameEl.focus()};
+document.getElementById('minor').onclick=function(){document.getElementById('wrap').classList.add('blocked')};
+document.getElementById('close').onclick=function(){if(A)A.quit()};
+/* language switch, same as in Settings */
+document.getElementById('langs').innerHTML=[['cs','Čeština'],['en','English']].map(function(l){
+ return '<button type="button" class="pill'+(l[0]===B.lang?' on':'')+'" data-l="'+l[0]+'">'+l[1]+'</button>'}).join('');
+Array.prototype.forEach.call(document.querySelectorAll('#langs .pill'),function(b){b.onclick=function(){
+ var l=b.getAttribute('data-l');if(l===B.lang)return;if(A){A.setLang(l);A.reload()}}});
+</script>
+</body>
+</html>
