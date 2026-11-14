@@ -123,7 +123,14 @@ var CSD={
  'Beero is about alcohol, so it is for adults only. Please drink responsibly.':'Beero je o alkoholu, takže je jen pro dospělé. Pij zodpovědně.',
  "Let's go":'Jdeme na to',"I'm under 18":'Je mi méně než 18','Sorry, Beero is for adults only':'Promiň, Beero je jen pro dospělé',
  'You need to be 18 or older to use this app. Come back when you are.':'Aplikaci můžeš používat od 18 let. Vrať se, až ti bude.',
- 'Close the app':'Zavřít aplikaci','Profile':'Profil','Your name':'Tvoje jméno','Saved.':'Uloženo.'
+ 'Close the app':'Zavřít aplikaci','Profile':'Profil','Your name':'Tvoje jméno','Saved.':'Uloženo.',
+ '+ Add earlier beers':'+ Přidat piva zpětně','Add earlier beers':'Přidat piva zpětně','Close':'Zavřít','Time of the first':'Čas prvního',
+ 'How many':'Kolik','One every':'Jedno každých','Size':'Velikost','Add':'Přidat',
+ 'Place':'Místo','Name of the pub or place':'Název hospody nebo místa','e.g. At Pepa\'s garden':'např. U Pepy na zahradě',
+ 'Places you have been':'Místa, kde jsi byl','Save':'Uložit','Remove the place':'Odebrat místo',
+ 'History':'Historie','Previous day':'Předchozí den','Next day':'Další den','Pick a day':'Vybrat den',
+ 'Blood alcohol estimate':'Odhad promile','Age':'Věk','Height (cm)':'Výška (cm)','Weight (kg)':'Váha (kg)',
+ 'Used only on this phone to estimate your blood alcohol on Today from the beer type, size and time. It is a rough guide, never a reason to drive.':'Zůstává jen v tomto telefonu a slouží k odhadu promile na obrazovce Dnes podle druhu piva, velikosti a času. Je to jen orientační vodítko, nikdy důvod sednout za volant.'
 };
 B.dec=function(x,d){var s=x.toFixed(d);return CS?s.replace('.',','):s};
 B.tr=function(t){return CS&&CSD.hasOwnProperty(t)?CSD[t]:t};
@@ -186,6 +193,48 @@ B.stats=function(list){
  s.places=Object.keys(places).length;s.venues=Object.keys(venues).length;
  Object.keys(cities).forEach(function(k){if(cities[k]>s.topCityN){s.topCityN=cities[k];s.topCity=k.split('|')[0]}});
  return s};
+
+/* ---------- blood alcohol estimate (promile) ----------
+   body: {sex:'m'|'f', age, h (cm), w (kg)} from Settings. Total body water by Watson (1980),
+   blood alcohol = grams absorbed * 0.8 / body water (g/L, read as ‰). Each beer is absorbed evenly over
+   ABSORB_MIN minutes; the liver removes ELIM ‰ per hour (people vary roughly 0.1-0.2). Only an estimate. */
+B.BAC_DEFAULT_ABV=4.5;   /* beer without a kind (or a kind without % and degree) */
+B.BAC_ELIM=0.13;         /* ‰ per hour */
+var ABSORB_MIN=45,ETHANOL=0.789;
+B.bodyOk=function(b){return !!(b&&(b.sex==='m'||b.sex==='f')&&b.h>0&&b.w>0)};
+B.tbw=function(b){var age=b.age>0?b.age:30;
+ return b.sex==='f'?-2.097+0.1069*b.h+0.2466*b.w:2.447-0.09516*age+0.1074*b.h+0.3362*b.w};
+/* grams of alcohol in one beer record */
+B.grams=function(x){var abv=x.abv!=null?x.abv:(x.na?0:B.BAC_DEFAULT_ABV);return (x.vol||500)*abv/100*ETHANOL};
+/* returns null without a body profile, otherwise
+   {now, peak, peakTs, soberTs (null = sober now), pts:[[ts, ‰]] every 10 min from the first beer of the session to sober} */
+B.bac=function(list,body,now){
+ if(!B.bodyOk(body))return null;
+ var tbw=B.tbw(body);if(!(tbw>5))return null;
+ now=now||Date.now();
+ var k=0.8/tbw,beta=B.BAC_ELIM/60,from=now-24*36e5;
+ var ds=(list||[]).filter(function(x){return x.ts>from&&x.ts<=now}).map(function(x){return {t:x.ts,g:B.grams(x)}}).filter(function(d){return d.g>0});
+ var out={now:0,peak:0,peakTs:null,soberTs:null,pts:[]};
+ if(!ds.length)return out;
+ ds.sort(function(a,b){return a.t-b.t});
+ var MIN=6e4,t=Math.floor(ds[0].t/MIN)*MIN,end=now+48*36e5,v=0,start=null,nowDone=false;
+ for(;t<=end;t+=MIN){
+  var inflow=0,pending=false;
+  for(var i=0;i<ds.length;i++){var d=ds[i],a=d.t,e=d.t+ABSORB_MIN*MIN;
+   if(t>=a&&t<e)inflow+=d.g/ABSORB_MIN;
+   if(t<e)pending=true}
+  v=Math.max(0,v+inflow*k-beta);
+  if(v>0&&start===null)start=t;
+  if(v===0&&!pending){
+   /* sober again: a new session may start later in the window, otherwise we are done */
+   if(t>=now){if(!nowDone){out.now=0;nowDone=true}if(out.peak>0&&out.soberTs===null&&start!==null&&t>now)out.soberTs=t;break}
+   start=null;out.pts=[];out.peak=0;out.peakTs=null;continue}
+  if(v>out.peak){out.peak=v;out.peakTs=t}
+  if(!nowDone&&t>=now){out.now=v;nowDone=true}
+  if(start!==null&&(t-start)%(10*MIN)===0)out.pts.push([t,v])}
+ if(out.pts.length&&out.now>0){out.pts.push([now,out.now]);out.pts.sort(function(a,b){return a[0]-b[0]})}
+ if(out.soberTs!==null)out.pts.push([out.soberTs,0]);
+ return out};
 
 /* beers per day for the 7 days of the current week (Mon..Sun) */
 B.week=function(days){var m=mondayOf(new Date()),out=[];

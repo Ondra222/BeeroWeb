@@ -59,7 +59,11 @@ h2{font-size:13px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;c
 .two .btn{flex:1}
 #msg{min-height:18px}
 #period .pill,#langs .pill{background:var(--card2)}
-#period .pill.on,#langs .pill.on{background:var(--gold)}
+#period .pill.on,#langs .pill.on,#bSex .pill.on{background:var(--gold)}
+#bSex .pill{background:var(--card2)}
+.nums{display:flex;gap:10px;margin-top:12px}
+.nums label{flex:1;min-width:0;display:block;color:var(--muted);font-size:13px;font-weight:600}
+.nums input{display:block;width:100%;box-sizing:border-box;margin-top:6px;font:inherit;font-size:16px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:11px 12px;outline:none}
 </style>
 </head>
 <body>
@@ -72,6 +76,18 @@ h2{font-size:13px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;c
   <input id="uname" type="text" maxlength="24" autocomplete="off" style="display:block;width:100%;box-sizing:border-box;margin-top:10px;font:inherit;font-size:16px;color:var(--text);background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:12px 14px;outline:none">
   <div class="d" id="unameMsg" style="min-height:18px;margin-top:6px"></div>
  </div>
+
+ <h2>Blood alcohol estimate</h2>
+ <div class="box" style="padding:14px 16px">
+  <div class="pills" id="bSex"></div>
+  <div class="nums">
+   <label>Age<input id="bAge" type="number" inputmode="numeric" min="18" max="100" placeholder="30"></label>
+   <label>Height (cm)<input id="bH" type="number" inputmode="numeric" min="120" max="230"></label>
+   <label>Weight (kg)<input id="bW" type="number" inputmode="numeric" min="35" max="250"></label>
+  </div>
+  <div class="d" id="bMsg" style="min-height:18px;margin-top:8px"></div>
+ </div>
+ <div class="hint">Used only on this phone to estimate your blood alcohol on Today from the beer type, size and time. It is a rough guide, never a reason to drive.</div>
 
  <h2>Appearance</h2>
  <div class="themes" id="themes"></div>
@@ -123,6 +139,22 @@ document.getElementById('back').onclick=function(){if(A)A.close()};
  el.onchange=function(){var v=el.value.trim();if(!v){el.value=cur;return}
   if(!A||A.setUserName(v)){cur=v;el.value=v;m.textContent=B.tr('Saved.');setTimeout(function(){m.textContent=''},1800)}};
  el.onkeydown=function(e){if(e.key==='Enter')el.blur()}})();
+/* ---------- body for the blood alcohol estimate (Settings.bodyJson) ---------- */
+(function(){var body={sex:null,age:null,h:null,w:null},cs=B.lang==='cs';
+ try{if(A&&A.getBody)body=JSON.parse(A.getBody())}catch(e){}
+ var ids={age:'bAge',h:'bH',w:'bW'},lim={age:[18,100],h:[120,230],w:[35,250]},m=document.getElementById('bMsg');
+ function sexes(){document.getElementById('bSex').innerHTML=[['m',cs?'Muž':'Man'],['f',cs?'Žena':'Woman']].map(function(x){
+   return '<button class="pill'+(body.sex===x[0]?' on':'')+'" data-s="'+x[0]+'">'+x[1]+'</button>'}).join('');
+  Array.prototype.forEach.call(document.querySelectorAll('#bSex .pill'),function(b){b.onclick=function(){body.sex=b.getAttribute('data-s');save();sexes()}})}
+ function state(){var miss=[];if(!body.sex)miss.push(cs?'pohlaví':'sex');if(!body.h)miss.push(cs?'výšku':'height');if(!body.w)miss.push(cs?'váhu':'weight');
+  m.textContent=miss.length?(cs?'Pro odhad ještě doplň ':'To get the estimate, add your ')+miss.join(cs?' a ':' and ')+'.':(cs?'Uloženo. Odhad uvidíš na obrazovce Dnes.':'Saved. You will see the estimate on Today.')}
+ function save(){if(A&&A.setBody)A.setBody(JSON.stringify(body));state()}
+ Object.keys(ids).forEach(function(k){var el=document.getElementById(ids[k]);el.value=body[k]||'';
+  el.onchange=function(){var v=Math.round(+el.value);
+   if(el.value===''){body[k]=null}else if(!(v>=lim[k][0]&&v<=lim[k][1])){el.value=body[k]||'';m.textContent=(cs?'Zadej číslo od ':'Enter a number from ')+lim[k][0]+(cs?' do ':' to ')+lim[k][1]+'.';return}else{body[k]=v;el.value=v}
+   save()};
+  el.onkeydown=function(e){if(e.key==='Enter')el.blur()}});
+ sexes();state()})();
 function stepper(key,val,minus,plus){return '<div class="step"><button data-k="'+key+'" data-d="-1" aria-label="Fewer"'+(minus?'':' disabled')+'>−</button><span>'+val+'</span><button data-k="'+key+'" data-d="1" aria-label="More"'+(plus?'':' disabled')+'>+</button></div>'}
 
 /* ---------- appearance ---------- */

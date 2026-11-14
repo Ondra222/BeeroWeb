@@ -1,7 +1,7 @@
 /* Beero service worker: the app works offline and can be installed.
    App files: network first (updates show up right away), cache when offline.
    Libraries and fonts from CDNs: cache first. Map tiles and APIs: always network. */
-var VERSION = 'beero-v1';
+var VERSION = 'beero-v2';
 var SHELL = ['./', 'index.html', 'welcome.html', 'map.html', 'pubs.html', 'awards.html', 'stats.html', 'settings.html', 'catalog.html',
   'android.js', 'ui.js', 'ui.css', 'beers.json', 'beero.png', 'manifest.webmanifest',
   'icons/icon-192.png', 'icons/icon-512.png', 'icons/maskable-512.png', 'icons/badge-96.png'];

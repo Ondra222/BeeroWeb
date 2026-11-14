@@ -1,0 +1,11 @@
+<script>
+/* web only: Mapy.com key (in the Android app it is built in from local.properties) */
+(function(){var A=window.Android,cs=window.Beero.lang==='cs',el=document.getElementById('mkey'),m=document.getElementById('mkMsg');
+ if(!A||!A.setMapyKey)return;
+ if(cs){document.getElementById('mkL').textContent='API klíč Mapy.com';
+  document.getElementById('mkD').textContent='Nepovinné. S klíčem mapa používá Mapy.com a ke každému pivu se uloží hospoda, ve které jsi. Klíč zdarma: developer.mapy.com'}
+ el.value=A.getMapyKey()||'';
+ el.onchange=function(){A.setMapyKey(el.value);m.textContent=cs?'Uloženo.':'Saved.';setTimeout(function(){m.textContent=''},1800)}})();
+/* "Stored only on this phone" -> in this browser */
+(function(){var d=document.querySelector('#dataN+.d');if(d)d.textContent=window.Beero.lang==='cs'?'Uloženo jen v tomto prohlížeči. Než ho vymažeš nebo změníš telefon, udělej zálohu.':'Stored only in this browser. Back up before you clear it or change phones.'})();
+</script>

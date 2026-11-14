@@ -24,7 +24,11 @@ function today(){var d=new Date();return d.getFullYear()+'-'+pad(d.getMonth()+1)
 function tz(){try{return Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'}catch(e){return 'UTC'}}
 function uuid(){if(window.crypto&&crypto.randomUUID)return crypto.randomUUID();
  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,function(c){var r=Math.random()*16|0;return(c==='x'?r:(r&3|8)).toString(16)})}
+function dayOf(ts){var d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
 function countToday(){var t=today(),n=0;beers().forEach(function(b){if(b.local_date===t)n++});return n}
+/* alcoholic beers today - the mascot and the reminders go by these (non-alcoholic ones do not count) */
+function countAlc(){var t=today(),n=0;beers().forEach(function(b){if(b.local_date===t&&!b.nonalc)n++});return n}
+var DEFAULT_VOL=500,PAST_MAX_DAYS=400;
 function update(id,fields){var a=beers();for(var i=0;i<a.length;i++)if(a[i].id===id){for(var k in fields)a[i][k]=fields[k];saveBeers(a);return true}return false}
 
 /* ---------- settings (Settings.kt) ---------- */
@@ -68,6 +72,18 @@ function label(k){
  if(new RegExp('(^|\\s)'+escRe(deg)+'(°|\\s|$)').test(name))return base;
  return base+' '+deg+'°'}
 function activeId(){return P('active_beer',null)}
+/* kind stored with every beer (BeerCatalog.kind): abv missing -> estimated from the degree (~0.4 % per degree) */
+function kindOf(k){if(!k)return null;var abv=k.abv!=null?+k.abv:(k.degree!=null?k.degree*0.4:null);
+ return {id:k.id,label:label(k),abv:abv,nonalc:!!k.nonalc||(abv!=null&&abv<=0.5)}}
+function kindById(id){return id?kindOf(findBeer(id)):null}
+/* beers saved before the web app knew nonalc/abv/vol (BeerDb.fillKind) */
+function fillKind(a){var ch=false;a.forEach(function(b){if(b.nonalc!=null)return;ch=true;
+ var k=b.beer_id?kindById(b.beer_id):null;if(k&&k.abv!=null&&b.abv==null)b.abv=k.abv;
+ b.nonalc=(k&&k.nonalc)||(b.abv!=null&&b.abv<=0.5)?1:0});return ch}
+(function(){var a=beers();if(a.length&&fillKind(a))saveBeers(a)})();
+/* one beer at time ts (also in the past); the day comes from ts in local time */
+function newBeer(ts,k,vol){var b={id:uuid(),ts:ts,local_date:dayOf(ts),tz:tz(),vol:vol,nonalc:k&&k.nonalc?1:0};
+ if(k){b.beer_id=k.id;b.beer=k.label;if(k.abv!=null)b.abv=k.abv}return b}
 
 /* ---------- reminders (Reminders.kt) ---------- */
 var LEVELS=[
@@ -151,9 +167,9 @@ function nearbyVenues(lat,lng,radius){
   out.sort(function(a,b){return a.d-b.d});return out})}
 function saveVenue(id,v){update(id,{venue:v.name,vlat:v.lat,vlng:v.lng});setP('last_venue',{name:v.name,lat:v.lat,lng:v.lng,ts:Date.now()});refresh()}
 function venueFor(id,l){
- if(!mapyKey())return;
  var lv=P('last_venue',null),recent=lv&&Date.now()-lv.ts<=4*3600*1000;
  if(recent&&dist(l.lat,l.lng,lv.lat,lv.lng)<=35){saveVenue(id,lv);return}
+ if(!mapyKey())return;
  var radius=Math.min(150,Math.max(60,(l.acc||50)*1.5));
  nearbyVenues(l.lat,l.lng,radius).then(function(c){
   if(!c.length)return;
@@ -168,20 +184,23 @@ function attach(id,l){update(id,{lat:l.lat,lng:l.lng});cityFor(id,l);venueFor(id
 var rt=null;function refresh(){clearTimeout(rt);rt=setTimeout(function(){if(window.syncCount)window.syncCount()},300)}
 
 /* ---------- backup (SettingsActivity) ---------- */
-var COLS=['id','ts','local_date','tz','lat','lng','place','country','venue','vlat','vlng','beer_id','beer'];
+var COLS=['id','ts','local_date','tz','lat','lng','place','country','venue','vlat','vlng','beer_id','beer','nonalc','abv','vol'];
+function row(b){var o={};COLS.forEach(function(c){if(b[c]!=null)o[c]=b[c]});return o}
+/* insert rows (backup / undo of a delete); ids already here are skipped */
+function insertRows(rows){var a=beers(),have={},added=0;a.forEach(function(b){have[b.id]=1});
+ (rows||[]).forEach(function(o){if(!o||!o.id||o.ts==null||!o.local_date||have[o.id])return;var b=row(o);
+  if(!b.tz)b.tz=tz();a.push(b);have[b.id]=1;added++});
+ fillKind(a);saveBeers(a);return added}
 function exportJson(){
- var arr=beers().map(function(b){var o={};COLS.forEach(function(c){if(b[c]!=null)o[c]=b[c]});return o});
- return JSON.stringify({app:'beero',version:2,beers:arr,catalog:custom()})}
+ var arr=beers().slice().sort(function(x,y){return x.ts-y.ts}).map(row);
+ return JSON.stringify({app:'beero',version:3,beers:arr,catalog:custom()})}
 function importJson(text){
  var root;try{root=JSON.parse(text)}catch(e){return -1}
  if(!root||root.app!=='beero'||!Array.isArray(root.beers))return -1;
  if(Array.isArray(root.catalog)){var cu=custom(),ids={};cu.forEach(function(c){ids[c.id]=1});
   root.catalog.forEach(function(o){if(o&&String(o.id).indexOf('c-')===0&&o.brand&&o.name&&!ids[o.id]){o.custom=true;cu.push(o);ids[o.id]=1}});
   writeJson('beero_custom',cu)}
- var a=beers(),have={},added=0;a.forEach(function(b){have[b.id]=1});
- root.beers.forEach(function(o){if(!o||!o.id||o.ts==null||!o.local_date||have[o.id])return;var b={};
-  COLS.forEach(function(c){if(o[c]!=null)b[c]=o[c]});if(!b.tz)b.tz=tz();a.push(b);have[b.id]=1;added++});
- a.sort(function(x,y){return x.ts-y.ts});saveBeers(a);return added}
+ return insertRows(root.beers)}
 function download(name,text){
  var blob=new Blob([text],{type:'application/json'}),f;
  try{f=new File([blob],name,{type:'application/json'})}catch(e){}
@@ -193,11 +212,19 @@ function download(name,text){
 /* ---------- the bridge ---------- */
 var A={
  /* BaseBridge */
- getBeers:function(){return JSON.stringify(beers().map(function(b){var o={ts:b.ts,d:b.local_date};
+ getBeers:function(){return JSON.stringify(beers().slice().sort(function(x,y){return x.ts-y.ts}).map(function(b){var o={id:b.id,ts:b.ts,d:b.local_date};
   if(b.place)o.city=b.place;if(b.country)o.country=b.country;if(b.lat!=null&&b.lng!=null){o.lat=b.lat;o.lng=b.lng}
   if(b.venue&&b.vlat!=null&&b.vlng!=null){o.venue=b.venue;o.vlat=b.vlat;o.vlng=b.vlng}
-  if(b.beer_id)o.bid=b.beer_id;if(b.beer)o.beer=b.beer;return o}))},
+  else if(b.venue)o.venue=b.venue;   /* own place of a beer without location: not on the map */
+  if(b.beer_id)o.bid=b.beer_id;if(b.beer)o.beer=b.beer;if(b.nonalc)o.na=true;if(b.abv!=null)o.abv=b.abv;if(b.vol!=null)o.vol=b.vol;return o}))},
  getCount:countToday,
+ getAlcCount:countAlc,
+ /* body for the blood alcohol estimate (Settings.bodyJson / setBody) */
+ getBody:function(){var b=P('body',{})||{};return JSON.stringify({sex:b.sex==='m'||b.sex==='f'?b.sex:null,age:b.age||null,h:b.h||null,w:b.w||null})},
+ setBody:function(json){var o;try{o=JSON.parse(json)}catch(e){return}var b={};
+  if(o.sex==='m'||o.sex==='f')b.sex=o.sex;
+  [['age',18,100],['h',120,230],['w',35,250]].forEach(function(x){var v=o[x[0]]==null?0:parseInt(o[x[0]],10);if(v>=x[1]&&v<=x[2])b[x[0]]=v});
+  setP('body',b)},
  go:function(tab){var p=PAGES[tab]||'index.html';if(p===page)return;
   if(tab==='settings'||tab==='catalog'||page==='index.html')location.href=p;else location.replace(p)},
  close:function(){if(history.length>1&&document.referrer&&document.referrer.indexOf(location.origin)===0)history.back();else location.replace('index.html')},
@@ -246,13 +273,43 @@ var A={
  deleteCustomBeer:function(id){writeJson('beero_custom',custom().filter(function(k){return k.id!==id}));if(activeId()===id)setP('active_beer',null)},
  /* Today (MainActivity) */
  addBeer:function(){
-  var id=uuid(),k=activeId()?findBeer(activeId()):null,b={id:id,ts:Date.now(),local_date:today(),tz:tz()};
-  if(k){b.beer_id=k.id;b.beer=label(k)}
+  var b=newBeer(Date.now(),kindById(activeId()),DEFAULT_VOL);
   var a=beers();a.push(b);saveBeers(a);
-  var n=countToday();remCheck(n);locate(id);return n},
- undo:function(){var a=beers(),t=today(),idx=-1,best=-1;
-  a.forEach(function(b,i){if(b.local_date===t&&b.ts>=best){best=b.ts;idx=i}});
-  if(idx>=0){a.splice(idx,1);saveBeers(a)}var n=countToday();remAfterUndo(n);return n},
+  if(!b.nonalc)remCheck(countAlc());locate(b.id);return countToday()},
+ /* the last saved beer of today (order of saving, so a beer added earlier for today can be undone too) */
+ undo:function(){var a=beers(),t=today();
+  for(var i=a.length-1;i>=0;i--)if(a[i].local_date===t){a.splice(i,1);saveBeers(a);break}
+  remAfterUndo(countAlc());return countToday()},
+ /* earlier beers {ts:[ms...], beer: catalog id or '', vol: ml} (BeerStore.addPast); JSON ids or 'null' */
+ addPast:function(json){var o;try{o=JSON.parse(json)}catch(e){return 'null'}
+  var ts=o&&o.ts;if(!Array.isArray(ts)||ts.length<1||ts.length>20)return 'null';
+  var now=Date.now(),oldest=now-PAST_MAX_DAYS*864e5;
+  if(ts.some(function(t){return typeof t!=='number'||!isFinite(t)||t<oldest||t>now+6e4}))return 'null';
+  var bid=String(o.beer||'').trim(),k=null;if(bid){k=kindById(bid);if(!k)return 'null'}
+  var vol=Math.min(2000,Math.max(100,parseInt(o.vol,10)||DEFAULT_VOL));
+  var a=beers(),ids=[],t=today(),alcToday=false;
+  ts.forEach(function(x){var b=newBeer(Math.round(x),k,vol);a.push(b);ids.push(b.id);if(b.local_date===t&&!b.nonalc)alcToday=true});
+  saveBeers(a);if(alcToday)remCheck(countAlc());return JSON.stringify(ids)},
+ /* delete beers by id; returns the deleted rows for restoreBeers */
+ deleteBeers:function(json){var ids;try{ids=JSON.parse(json)}catch(e){return '[]'}if(!Array.isArray(ids))return '[]';
+  var set={};ids.forEach(function(i){if(i)set[i]=1});var gone=[],a=beers().filter(function(b){if(set[b.id]){gone.push(row(b));return false}return true});
+  saveBeers(a);remAfterUndo(countAlc());return JSON.stringify(gone)},
+ restoreBeers:function(json){var rows;try{rows=JSON.parse(json)}catch(e){return 0}return Array.isArray(rows)?insertRows(rows):0},
+ /* own place for beers {ids, name (null = remove), lat?, lng?}; remembered for the next beers if it is the newest one from the last 4 hours */
+ setVenue:function(json){var o;try{o=JSON.parse(json)}catch(e){return false}
+  var ids=Array.isArray(o.ids)?o.ids.filter(Boolean):[];if(!ids.length||ids.length>200)return false;
+  var name=o.name==null?'':String(o.name).trim().replace(/\s+/g,' ').slice(0,60);
+  var lat=typeof o.lat==='number'&&isFinite(o.lat)?o.lat:null,lng=typeof o.lng==='number'&&isFinite(o.lng)?o.lng:null;
+  if(lat===null||lng===null){lat=null;lng=null}
+  var set={};ids.forEach(function(i){set[i]=1});var a=beers();
+  a.forEach(function(b){if(!set[b.id])return;
+   if(!name){delete b.venue;delete b.vlat;delete b.vlng}
+   else{b.venue=name;if(lat!==null){b.vlat=lat;b.vlng=lng}else{delete b.vlat;delete b.vlng}}});
+  saveBeers(a);
+  var last=a[a.length-1];
+  if(last&&set[last.id]&&Date.now()-last.ts<4*36e5){
+   if(name&&lat!==null)setP('last_venue',{name:name,lat:lat,lng:lng,ts:Date.now()});else setP('last_venue',null)}
+  return true},
  hasPoses:function(){return true},savePose:function(){},
  /* Map */
  getMapyKey:mapyKey,

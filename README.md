@@ -30,6 +30,18 @@ a hospody se nevyhledávají. Na developer.mapy.com si u klíče můžeš omezit
   tady **Nastavení → Obnovit** (formát zálohy je stejný, funguje to i opačně).
 - Upozornění chodí, jen když je povolíš; na iPhonu až po přidání na plochu (iOS 16.4+).
 
+## Co umí navíc od listopadu 2026 (stejně jako Android)
+- **Přidat piva zpětně** (až 400 dní dozadu, i víc piv najednou s odstupem) a **Historie** dne s mazáním a Vrátit.
+- **Velikost piva** (malé / velké…) – ukládá se objem.
+- **Nealko piva** se počítají, ale nemění Beera a nespouští upozornění.
+- **Odhad promile** na obrazovce Dnes podle druhu piva, velikosti a času – údaje o těle v Nastavení.
+- **Vlastní místo** u piva (když se hospoda nenajde) – zapamatuje se pro další piva na stejném místě, i bez klíče Mapy.com.
+- Záloha je ve formátu verze 3 (nealko, % alkoholu, objem), stejně jako v Android aplikaci.
+
 ## Úpravy
+Obrazovky se berou z Android aplikace skriptem:
+`python3 tools/sync_from_android.py ../Beero/BeeroAppMap9/BeeroApp/app/src/main/assets`
+(doplní PWA hlavičku, `android.js`, klíč Mapy.com v Nastavení). Nové metody mostu `window.Android` je potřeba
+dopsat ručně do `android.js`.
 Po změně souborů zvyš `VERSION` v `sw.js`, ať se telefonům stáhne nová verze.
 Lokální test: `python3 -m http.server` a otevřít http://localhost:8000.

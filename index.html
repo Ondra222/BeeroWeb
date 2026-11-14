@@ -64,6 +64,92 @@ html,body{overflow-x:hidden}
 .week .row{justify-content:space-between;margin-bottom:40px}
 #bars{position:relative}
 .week .row b{font-size:16px;font-weight:700}
+/* add earlier beers */
+.sub2{display:flex;justify-content:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.sub2 button{border:1px solid var(--line);background:none;color:var(--text);font-size:15px;font-weight:600;padding:10px 18px;border-radius:20px}
+/* day history */
+.hNav{display:flex;align-items:center;gap:8px;margin-top:10px}
+.hNav>button{width:44px;height:44px;flex:none;border:none;border-radius:14px;background:var(--card);font-size:22px;font-weight:600;color:var(--text)}
+.hNav>button:disabled{opacity:.25}
+.hDay{flex:1;min-width:0;position:relative;text-align:center;background:var(--card);border-radius:14px;padding:6px 8px}
+.hDay b{display:block;font-size:17px}
+.hDay span{color:var(--muted);font-size:13px}
+.hDay input{position:absolute;inset:0;opacity:0;width:100%;height:100%;border:none}
+#hList{margin-top:14px}
+.hr{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line)}
+.hr:last-child{border-bottom:none}
+.hr .tm{font-weight:700;font-variant-numeric:tabular-nums;width:46px;flex:none}
+.hr .m{flex:1;min-width:0}
+.hr .m div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr .m .w{color:var(--muted);font-size:13px;margin-top:2px}
+.hr .na{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.4px;color:#5BB98C;border:1px solid #5BB98C;border-radius:6px;padding:1px 5px;margin-left:6px;vertical-align:1px}
+.hr .del{flex:none;width:40px;height:40px;border:none;border-radius:12px;background:var(--card);color:var(--muted);display:flex;align-items:center;justify-content:center}
+.hr .del svg{width:19px;height:19px}
+.hEmpty{color:var(--muted);text-align:center;padding:28px 0}
+#hAll{display:block;width:100%;margin-top:16px;border:1px solid #E5654B;background:none;color:#E5654B;font-size:16px;font-weight:700;padding:14px;border-radius:22px}
+#hAll.sure{background:#E5654B;color:#fff}
+#hAll[hidden]{display:none}
+.hr .m{background:none;border:none;text-align:left;color:inherit;font:inherit;padding:0;cursor:pointer}
+.hr .w .pin{color:var(--gold);font-weight:600}
+/* place of the latest beer, right under +1 */
+#where{display:flex;align-items:center;gap:8px;max-width:100%;margin:12px auto 0;border:none;background:none;color:var(--muted);font-size:14px;padding:4px 8px}
+#where[hidden]{display:none}
+#where svg{width:16px;height:16px;flex:none}
+#where span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#where b{color:var(--gold);font-weight:700;flex:none}
+/* place editor */
+#vBg{z-index:2550}
+#vName{margin-top:4px}
+#vSug .pill{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#vSug .pill small{color:var(--muted);font-weight:500;margin-left:6px}
+#vSug .pill.on small{color:inherit}
+.vAll{display:flex;align-items:center;gap:10px;margin-top:16px;font-size:15px}
+.vAll[hidden]{display:none}
+.vAll input{width:22px;height:22px;accent-color:var(--gold);flex:none}
+#vNote{color:var(--muted);font-size:13px;margin:10px 2px 0;min-height:16px}
+#vSave{display:block;width:100%;margin-top:14px;border:none;background:var(--gold);color:var(--gold-ink);font-size:18px;font-weight:700;padding:16px;border-radius:24px}
+#vSave:disabled{opacity:.4}
+#vDel{display:block;width:100%;margin-top:10px;border:none;background:none;color:#E5654B;font-size:15px;font-weight:700;padding:10px}
+#vDel[hidden]{display:none}
+.shBg{position:fixed;inset:0;z-index:2500;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}
+.shBg[hidden]{display:none}
+.sheet{width:100%;max-width:520px;max-height:92vh;overflow-y:auto;background:var(--bg);border-radius:26px 26px 0 0;padding:18px 20px calc(22px + env(safe-area-inset-bottom))}
+.sheet .hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.sheet .hd b{font-size:21px;font-weight:700}
+.sheet .x{border:none;background:var(--card);width:36px;height:36px;border-radius:18px;font-size:20px;line-height:1}
+.sheet .lb{display:block;font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin:16px 2px 8px}
+.sheet .pills{flex-wrap:wrap}
+.sheet .pill{padding:9px 14px;font-size:14px}
+.fld{display:block;width:100%;font:inherit;font-size:16px;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 14px;outline:none;color-scheme:inherit}
+.fld[hidden]{display:none}
+.duo{display:flex;gap:12px}
+.duo>div{flex:1;min-width:0}
+.stp{display:flex;align-items:center;justify-content:space-between;background:var(--card);border-radius:14px;padding:4px}
+.stp button{width:40px;height:40px;border:none;border-radius:11px;background:none;font-size:22px;font-weight:600}
+.stp button:disabled{opacity:.25}
+.stp span{font-weight:700;font-size:18px}
+#pSum{color:var(--muted);font-size:14px;margin:14px 2px 0;min-height:18px}
+#pErr{color:#E5654B;font-size:14px;margin:6px 2px 0;min-height:18px}
+#pSave{display:block;width:100%;margin-top:12px;border:none;background:var(--gold);color:var(--gold-ink);font-size:18px;font-weight:700;padding:16px;border-radius:24px}
+#pSave:disabled{opacity:.4}
+.snack{position:fixed;left:16px;right:16px;bottom:calc(var(--nav-h) + 14px);z-index:2700;background:var(--text);color:var(--gold-ink);border-radius:16px;
+ padding:12px 12px 12px 16px;display:flex;align-items:center;gap:12px;font-size:15px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.4);transform:translateY(160%);transition:transform .3s}
+.snack.show{transform:none}
+.snack span{flex:1}
+.snack button{border:none;background:none;color:inherit;font-weight:800;font-size:15px;padding:6px 8px;text-decoration:underline}
+/* blood alcohol estimate */
+#bac{margin-top:16px;display:block;width:100%;border:none;text-align:left;color:var(--text)}
+#bac .r{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+#bac .k{font-size:12px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted)}
+#bac .v{font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1.1;margin-top:4px;font-variant-numeric:tabular-nums}
+#bac .v small{font-size:20px;font-weight:700;margin-left:4px}
+#bac .s{color:var(--muted);font-size:14px;margin-top:2px}
+#bac .s b{color:var(--text);font-weight:700}
+#bac svg{display:block;width:100%;height:70px;margin-top:10px;overflow:visible}
+#bac .f{color:var(--faint);font-size:12px;margin-top:10px}
+#bac .go{color:var(--gold);font-weight:700;font-size:15px;margin-top:8px}
+#bac.hi .v{color:#E5654B}
+#bac.mid .v{color:var(--gold)}
 </style>
 </head>
 <body>
@@ -78,10 +164,52 @@ html,body{overflow-x:hidden}
   <div class="count"><span id="n">0</span><span id="nl">beers today</span></div>
  </div>
  <button id="add"><b>+1</b>Add a beer</button>
+ <button id="where" hidden></button>
+ <div class="sub2"><button id="past">+ Add earlier beers</button><button id="hist">History</button></div>
+ <button class="card" id="bac"></button>
  <button class="card" id="kind"><span id="kindLogo"></span><span class="m"><span class="k" id="kindK">Counting</span><span class="nm" id="kindN" translate="no"></span></span><span class="ch"><span>Change</span> ›</span></button>
  <div class="card" id="evo"><div class="r"><b id="evoName">Desítka</b><span id="evoTot"></span></div><div class="eb"><i id="evoBar" style="width:0"></i></div><div class="nx" id="evoNext"></div></div>
  <div class="card week"><div class="row"><b>This week</b><span class="muted" id="wk">0 beers</span></div><div class="bars" id="bars"></div></div>
 </div>
+<div class="shBg" id="pBg" hidden><div class="sheet" role="dialog" aria-label="Add earlier beers">
+ <div class="hd"><b>Add earlier beers</b><button class="x" id="pX" aria-label="Close">&times;</button></div>
+ <span class="lb">Day</span>
+ <div class="pills" id="pDay"></div>
+ <input class="fld" type="date" id="pDate" hidden style="margin-top:10px">
+ <div class="duo">
+  <div><span class="lb">Time of the first</span><input class="fld" type="time" id="pTime"></div>
+  <div><span class="lb">How many</span><div class="stp"><button id="pMinus" aria-label="Fewer">&minus;</button><span id="pN">1</span><button id="pPlus" aria-label="More">+</button></div></div>
+ </div>
+ <div id="pGapBox"><span class="lb">One every</span><div class="pills" id="pGap"></div></div>
+ <span class="lb">Beer</span>
+ <select class="fld" id="pBeer" translate="no"></select>
+ <span class="lb">Size</span>
+ <div class="pills" id="pVol"></div>
+ <div id="pSum"></div>
+ <div id="pErr"></div>
+ <button id="pSave">Add</button>
+</div></div>
+<div class="shBg" id="hBg" hidden><div class="sheet" role="dialog" aria-label="History">
+ <div class="hd"><b>History</b><button class="x" id="hX" aria-label="Close">&times;</button></div>
+ <div class="hNav">
+  <button id="hPrev" aria-label="Previous day">&lsaquo;</button>
+  <label class="hDay"><b id="hTitle"></b><span id="hSum"></span><input type="date" id="hPick" aria-label="Pick a day"></label>
+  <button id="hNext" aria-label="Next day">&rsaquo;</button>
+ </div>
+ <div id="hList"></div>
+ <button id="hAll" hidden></button>
+</div></div>
+<div class="shBg" id="vBg" hidden><div class="sheet" role="dialog" aria-label="Place">
+ <div class="hd"><b>Place</b><button class="x" id="vX" aria-label="Close">&times;</button></div>
+ <div id="vBeer" class="muted" style="font-size:14px;margin-bottom:4px"></div>
+ <span class="lb">Name of the pub or place</span>
+ <input class="fld" id="vName" maxlength="60" autocomplete="off" enterkeyhint="done" placeholder="e.g. At Pepa's garden">
+ <div id="vSugBox"><span class="lb">Places you have been</span><div class="pills" id="vSug"></div></div>
+ <label class="vAll" id="vAllBox"><input type="checkbox" id="vAll" checked><span id="vAllT"></span></label>
+ <div id="vNote"></div>
+ <button id="vSave">Save</button>
+ <button id="vDel" hidden>Remove the place</button>
+</div></div>
 <script src="android.js"></script>
 <script src="ui.js"></script>
 <script>
@@ -102,8 +230,10 @@ var ui={update:function(){
   return '<div class="b'+(w.today?' on':'')+'"><i style="height:'+Math.max(12,Math.round(w.n/max*100))+'%"></i><span>'+w.label+'</span></div>'}).join('');
  B.bindBars(document.getElementById('bars'),wk.map(function(w){var d=B.parse(w.d);
   return '<b>'+w.n+'</b> '+B.word(w.n,'beer')+' \u00b7 '+(w.today?B.tr('today'):B.nice(d))}));
- evoUi(st.total);
+ evoUi(list.filter(function(b){return !b.na}).length);
  kindUi();
+ bacUi(list);
+ if(window.whereUi)whereUi(list);
  var res=B.awards(list),fresh=B.newAwards(res);
  fresh.forEach(function(r,i){setTimeout(function(){B.toast(r)},i*4000)});
  if(fresh.length)B.markSeen(res)}};
@@ -123,6 +253,208 @@ function kindUi(){var k=null;try{k=A&&A.getActiveBeer?JSON.parse(A.getActiveBeer
  document.getElementById('kindK').textContent=B.tr(k?'Counting':'Choose your beer');
  document.getElementById('kindN').textContent=k?k.label:B.tr('Beers are counted without a kind.')}
 document.getElementById('kind').onclick=function(){if(A)A.go('catalog')};
+/* ---------- blood alcohol estimate (B.bac in ui.js), refreshed every minute ---------- */
+function bacUi(list){
+ var el=document.getElementById('bac'),cs=B.lang==='cs',body=null;
+ try{body=A&&A.getBody?JSON.parse(A.getBody()):(window.DEMO_BODY||null)}catch(e){body=null}
+ var r=B.bac(list||B.load(),body,Date.now());
+ if(!r){el.className='card';
+  el.innerHTML='<div class="k">'+(cs?'Odhad promile':'Blood alcohol estimate')+'</div>'+
+   '<div class="s" style="margin-top:6px">'+(cs?'Doplň pohlaví, výšku a váhu a Beero ti spočítá orientační promile podle druhu piva a času.':'Add your sex, height and weight and Beero estimates your blood alcohol from the beer type and the time.')+'</div>'+
+   '<div class="go">'+(cs?'Doplnit v nastavení ›':'Fill in in Settings ›')+'</div>';
+  return}
+ var v=r.now,lvl=v>=0.5?'hi':v>=0.2?'mid':'';
+ el.className='card'+(lvl?' '+lvl:'');
+ var sub;
+ if(v>0&&r.soberTs)sub=(cs?'Na nule zhruba v ':'Back to zero around ')+'<b>'+B.hhmm(r.soberTs)+'</b>'+dayHint(r.soberTs);
+ else if(r.soberTs)sub=(cs?'Alkohol se ještě vstřebává, na nule zhruba v ':'Still being absorbed, back to zero around ')+'<b>'+B.hhmm(r.soberTs)+'</b>'+dayHint(r.soberTs);
+ else sub=cs?'Za posledních 24 hodin žádný alkohol v krvi':'No alcohol in your blood from the last 24 hours';
+ if(r.peak>0&&r.peakTs>Date.now()+6e4)sub+=(cs?' · vrchol ':' · peak ')+'<b>'+B.dec(r.peak,2)+' ‰</b>'+(cs?' v ':' at ')+B.hhmm(r.peakTs);
+ el.innerHTML='<div class="r"><span class="k">'+(cs?'Odhad promile':'Blood alcohol estimate')+'</span></div>'+
+  '<div class="v">'+B.dec(v,2)+'<small>‰</small></div><div class="s">'+sub+'</div>'+bacChart(r)+
+  '<div class="f">'+(cs?'Jen orientační odhad – každý odbourává alkohol jinak. Za volant jen s 0,0 ‰ a raději až další den.':'A rough estimate only – everyone processes alcohol differently. Drive only at 0.0 ‰, better the next day.')+'</div>'}
+function dayHint(ts){var d=new Date(ts),t=new Date();if(d.toDateString()===t.toDateString())return '';
+ var cs=B.lang==='cs',tm=new Date(t);tm.setDate(t.getDate()+1);
+ return d.toDateString()===tm.toDateString()?(cs?' (zítra)':' (tomorrow)'):' ('+B.nice(d)+')'}
+/* the curve from the first beer of the session to zero, with a dot at "now" */
+function bacChart(r){var p=r.pts;if(!p||p.length<2)return '';
+ var W=320,Hh=70,t0=p[0][0],t1=p[p.length-1][0],mx=Math.max(0.3,r.peak*1.15),now=Date.now();
+ function X(t){return (t-t0)/(t1-t0||1)*W}function Y(v){return Hh-v/mx*(Hh-6)}
+ var past='',fut='',line=p.map(function(q){return X(q[0]).toFixed(1)+','+Y(q[1]).toFixed(1)});
+ p.forEach(function(q,i){(q[0]<=now?function(){past+=(past?' ':'')+line[i]}:function(){fut+=(fut?' ':'')+line[i]})()});
+ var nx=X(Math.min(now,t1)),nv=r.now,lp=past.split(' ').pop();
+ if(lp&&fut)fut=lp+' '+fut;
+ var ticks='',step=36e5*(t1-t0>12*36e5?3:t1-t0>5*36e5?2:1),h0=Math.ceil(t0/36e5)*36e5;
+ for(var t=h0;t<=t1;t+=step){var d=new Date(t);ticks+='<text x="'+X(t).toFixed(1)+'" y="'+(Hh+14)+'" font-size="10" text-anchor="middle" fill="var(--faint)">'+d.getHours()+(B.lang==='cs'?'':'h')+'</text>'}
+ return '<svg viewBox="0 0 '+W+' '+(Hh+16)+'" preserveAspectRatio="none" aria-hidden="true">'+
+  '<line x1="0" y1="'+Hh+'" x2="'+W+'" y2="'+Hh+'" stroke="var(--line)" stroke-width="1"/>'+
+  (past?'<polyline points="'+past+'" fill="none" stroke="var(--gold)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>':'')+
+  (fut?'<polyline points="'+fut+'" fill="none" stroke="var(--muted)" stroke-width="2" stroke-dasharray="4 4" stroke-linejoin="round"/>':'')+
+  '<circle cx="'+nx.toFixed(1)+'" cy="'+Y(nv).toFixed(1)+'" r="4.5" fill="var(--gold)" stroke="var(--card)" stroke-width="2"/>'+ticks+'</svg>'}
+setInterval(function(){bacUi()},60000);
+document.getElementById('bac').onclick=function(){if(A&&!B.bodyOk(JSON.parse(A.getBody())))A.go('settings')};
+
+/* ---------- add earlier beers (forgot to tap) ---------- */
+var past={day:0,n:1,gap:30,vol:500};
+function pEl(id){return document.getElementById(id)}
+function pDateStr(){if(past.day<3){var d=new Date();d.setDate(d.getDate()-past.day);return B.fmt(d)}return pEl('pDate').value}
+/* timestamps of the beers to add, or a reason why not */
+function pTimes(){var ds=pDateStr(),tm=pEl('pTime').value;
+ if(!ds||!/^\d{4}-\d\d-\d\d$/.test(ds))return {err:B.lang==='cs'?'Vyber den.':'Pick a day.'};
+ if(!tm)return {err:B.lang==='cs'?'Vyber čas.':'Pick a time.'};
+ var a=ds.split('-'),h=tm.split(':'),first=new Date(+a[0],+a[1]-1,+a[2],+h[0],+h[1]).getTime(),out=[];
+ for(var i=0;i<past.n;i++)out.push(first+i*past.gap*6e4);
+ if(out[out.length-1]>Date.now()+6e4)return {ts:out,err:B.lang==='cs'?'To je ještě v budoucnosti. Zvol dřívější čas.':'That is still in the future. Pick an earlier time.'};
+ if(first<Date.now()-400*864e5)return {ts:out,err:B.lang==='cs'?'Tak daleko zpátky to nejde.':'That is too far back.'};
+ return {ts:out}}
+function pDraw(){var cs=B.lang==='cs';
+ pEl('pDay').innerHTML=[cs?'Dnes':'Today',cs?'Včera':'Yesterday',cs?'Předevčírem':'2 days ago',cs?'Jiný den':'Other day'].map(function(t,i){
+  return '<button class="pill'+(past.day===i?' on':'')+'" data-i="'+i+'">'+t+'</button>'}).join('');
+ pEl('pDate').hidden=past.day!==3;
+ pEl('pN').textContent=past.n;pEl('pMinus').disabled=past.n<=1;pEl('pPlus').disabled=past.n>=20;
+ pEl('pGapBox').style.display=past.n>1?'':'none';
+ pEl('pGap').innerHTML=[15,30,45,60,90].map(function(g){return '<button class="pill'+(past.gap===g?' on':'')+'" data-g="'+g+'">'+g+' min</button>'}).join('');
+ pEl('pVol').innerHTML=[[300,'0,3 l'],[400,'0,4 l'],[500,'0,5 l'],[1000,'1 l']].map(function(v){
+  return '<button class="pill'+(past.vol===v[0]?' on':'')+'" data-v="'+v[0]+'">'+(cs?v[1]:v[1].replace(',','.'))+'</button>'}).join('');
+ Array.prototype.forEach.call(pEl('pDay').children,function(b){b.onclick=function(){past.day=+b.getAttribute('data-i');pDraw()}});
+ Array.prototype.forEach.call(pEl('pGap').children,function(b){b.onclick=function(){past.gap=+b.getAttribute('data-g');pDraw()}});
+ Array.prototype.forEach.call(pEl('pVol').children,function(b){b.onclick=function(){past.vol=+b.getAttribute('data-v');pDraw()}});
+ var r=pTimes(),sum='';
+ if(r.ts){var names=r.ts.map(B.hhmm);sum=B.n(past.n,'beer')+': '+(names.length>6?names.slice(0,3).join(', ')+' … '+names[names.length-1]:names.join(', '));
+  var d0=new Date(r.ts[0]),d1=new Date(r.ts[r.ts.length-1]);if(d0.getDate()!==d1.getDate())sum+=(cs?' (přes půlnoc)':' (past midnight)')}
+ pEl('pSum').textContent=sum;pEl('pErr').textContent=r.err||'';pEl('pSave').disabled=!!r.err}
+function pBeers(){var sel=pEl('pBeer'),cat=null,cs=B.lang==='cs';
+ try{cat=A&&A.getCatalog?JSON.parse(A.getCatalog()):(window.DEMO_CATALOG||{beers:[]})}catch(e){cat={beers:[]}}
+ var list=(cat.beers||[]).slice(),used=list.filter(function(b){return b.uses>0}).sort(function(a,b){return (b.last||0)-(a.last||0)});
+ function opt(b){return '<option value="'+B.esc(b.id)+'">'+B.esc(b.label)+(b.abv!=null&&!b.nonalc?' · '+B.dec(b.abv,1)+' %':'')+'</option>'}
+ sel.innerHTML='<option value="">'+(cs?'Pivo bez druhu (počítá se 4,5 %)':'Beer without a kind (counted as 4.5 %)')+'</option>'+
+  (used.length?'<optgroup label="'+(cs?'Naposledy pité':'Recently drunk')+'">'+used.slice(0,8).map(opt).join('')+'</optgroup>':'')+
+  '<optgroup label="'+(cs?'Všechna piva':'All beers')+'">'+list.map(opt).join('')+'</optgroup>';
+ sel.value=cat.active||''}
+function pOpen(){var d=new Date(Date.now()-36e5);past={day:0,n:1,gap:30,vol:500};
+ pEl('pTime').value=B.pad(d.getHours())+':'+B.pad(d.getMinutes()-d.getMinutes()%5);
+ if(d.getDate()!==new Date().getDate())past.day=1;
+ var y=new Date();y.setDate(y.getDate()-3);pEl('pDate').max=B.today();pEl('pDate').value=B.fmt(y);
+ pBeers();pDraw();pEl('pBg').hidden=false}
+function pClose(){pEl('pBg').hidden=true}
+pEl('past').onclick=pOpen;pEl('pX').onclick=pClose;
+pEl('pBg').onclick=function(e){if(e.target===pEl('pBg'))pClose()};
+pEl('pMinus').onclick=function(){past.n=Math.max(1,past.n-1);pDraw()};
+pEl('pPlus').onclick=function(){past.n=Math.min(20,past.n+1);pDraw()};
+pEl('pTime').oninput=pDraw;pEl('pDate').oninput=pDraw;
+pEl('pSave').onclick=function(){var r=pTimes();if(r.err||!r.ts)return;
+ var ids=null;try{ids=A?JSON.parse(A.addPast(JSON.stringify({ts:r.ts,beer:pEl('pBeer').value,vol:past.vol}))):r.ts.map(String)}catch(e){ids=null}
+ if(!ids){pEl('pErr').textContent=B.lang==='cs'?'Piva se nepodařilo uložit.':'Could not save the beers.';return}
+ pClose();if(window.syncCount)window.syncCount();
+ var cs=B.lang==='cs',d=new Date(r.ts[0]),when=d.toDateString()===new Date().toDateString()?(cs?'dnes':'today'):B.nice(d);
+ snack((cs?'Přidáno ':'Added ')+B.n(ids.length,'beer')+' · '+when+' '+B.hhmm(r.ts[0]),function(){if(A)A.deleteBeers(JSON.stringify(ids));if(window.syncCount)window.syncCount()})};
+/* ---------- history of one day: list and delete beers ---------- */
+var hDay=null,hSure=false;
+var TRASH='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2l1-12M9 7V4h6v3"/></svg>';
+function hShift(n){var d=B.parse(hDay);d.setDate(d.getDate()+n);hDay=B.fmt(d);hSure=false;hDraw()}
+function vols(ml){var l=ml/1000,s=(Math.round(l*10)/10).toString();return (B.lang==='cs'?s.replace('.',','):s)+' l'}
+function hDraw(){var cs=B.lang==='cs',all=B.load(),day=all.filter(function(b){return b.d===hDay}),t=B.today();
+ var y=new Date();y.setDate(y.getDate()-1);
+ pEl('hTitle').textContent=hDay===t?(cs?'Dnes':'Today'):hDay===B.fmt(y)?(cs?'Včera':'Yesterday'):B.nice(B.parse(hDay));
+ var ml=day.reduce(function(s,b){return s+(b.vol||500)},0),na=day.filter(function(b){return b.na}).length;
+ pEl('hSum').textContent=day.length?B.n(day.length,'beer')+' · '+vols(ml)+(na?' · '+na+(cs?' nealko':' alcohol-free'):''):(hDay===t?'':B.nice(B.parse(hDay)));
+ pEl('hPick').max=t;pEl('hPick').value=hDay;
+ pEl('hNext').disabled=hDay>=t;
+ var first=all.length?all[0].d:t;pEl('hPrev').disabled=hDay<=first;
+ pEl('hList').innerHTML=day.length?day.map(function(b){
+  var kind=b.beer||(cs?'Pivo':'Beer');
+  var pin=b.venue?'<span class="pin">'+B.esc(b.venue)+'</span>':(b.city?B.esc(b.city)+' · ':'')+'<span class="pin">'+(cs?'+ místo':'+ place')+'</span>';
+  return '<div class="hr"><span class="tm">'+B.hhmm(b.ts)+'</span><button class="m" data-id="'+B.esc(b.id||'')+'"><div><span translate="no">'+B.esc(kind)+'</span>'+(b.na?'<span class="na">'+(cs?'NEALKO':'0.0')+'</span>':'')+'</div>'+
+   '<div class="w">'+vols(b.vol||500)+(b.abv!=null&&!b.na?' · '+B.dec(b.abv,1)+' %':'')+' · '+pin+'</div></button>'+
+   '<button class="del" data-id="'+B.esc(b.id||'')+'" aria-label="'+(cs?'Smazat':'Delete')+'">'+TRASH+'</button></div>'}).join(''):
+  '<div class="hEmpty">'+(cs?'Tenhle den žádné pivo.':'No beers on this day.')+'</div>';
+ Array.prototype.forEach.call(pEl('hList').querySelectorAll('.del'),function(btn){btn.onclick=function(){var id=btn.getAttribute('data-id');if(id)hDelete([id])}});
+ Array.prototype.forEach.call(pEl('hList').querySelectorAll('.m'),function(btn){btn.onclick=function(){var id=btn.getAttribute('data-id');if(id)vOpen(id)}});
+ var all2=pEl('hAll');all2.hidden=day.length<2;all2.className=hSure?'sure':'';
+ all2.textContent=hSure?(cs?'Opravdu smazat '+B.n(day.length,'beer')+'?':'Really delete '+B.n(day.length,'beer')+'?'):(cs?'Smazat celý den':'Delete the whole day');
+ all2.onclick=function(){if(!hSure){hSure=true;hDraw();return}hDelete(day.map(function(b){return b.id}).filter(Boolean))}}
+function hDelete(ids){if(!ids.length||!A)return;var cs=B.lang==='cs',gone='[]';
+ try{gone=A.deleteBeers(JSON.stringify(ids))||'[]'}catch(e){gone='[]'}
+ hSure=false;if(window.syncCount)window.syncCount();hDraw();
+ snack((cs?'Smazáno ':'Deleted ')+B.n(ids.length,'beer'),function(){if(A.restoreBeers)A.restoreBeers(gone);if(window.syncCount)window.syncCount();if(!pEl('hBg').hidden)hDraw()})}
+function hOpen(d){hDay=d||B.today();hSure=false;hDraw();pEl('hBg').hidden=false}
+pEl('hist').onclick=function(){hOpen()};
+pEl('hX').onclick=function(){pEl('hBg').hidden=true};
+pEl('hBg').onclick=function(e){if(e.target===pEl('hBg'))pEl('hBg').hidden=true};
+pEl('hPrev').onclick=function(){hShift(-1)};pEl('hNext').onclick=function(){hShift(1)};
+pEl('hPick').onchange=function(){var v=pEl('hPick').value;if(v&&v<=B.today()){hDay=v;hSure=false;hDraw()}};
+document.querySelector('.week .row').onclick=function(){hOpen()};
+/* ---------- edit the place of a beer (no pub found, or the wrong one) ---------- */
+var V=null;
+var PIN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>';
+function metres(a,b,c,d){var R=6371e3,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r*Math.cos((a+c)/2*r);return Math.sqrt(x*x+y*y)*R}
+/* beers of the same evening at the same spot: same day, same place now, and near (or both without a location) */
+function vGroup(b,all){return all.filter(function(x){
+ if(x.d!==b.d||(x.venue||'')!==(b.venue||''))return false;
+ if(b.lat==null||x.lat==null)return b.lat==null&&x.lat==null||!!b.venue;
+ return metres(b.lat,b.lng,x.lat,x.lng)<=150})}
+/* places used before: one entry per pub, nearest first when the beer has a location */
+function vPlaces(b,all){var m={};
+ all.forEach(function(x){if(!x.venue||x.vlat==null)return;var k=B.venueKey(x),p=m[k]||(m[k]={name:x.venue,lat:x.vlat,lng:x.vlng,n:0,last:0});p.n++;p.last=Math.max(p.last,x.ts)});
+ var list=Object.keys(m).map(function(k){var p=m[k];p.dist=b.lat!=null?metres(b.lat,b.lng,p.lat,p.lng):null;return p});
+ if(b.lat!=null)list=list.filter(function(p){return p.dist<=3000}).sort(function(a,c){return a.dist-c.dist});
+ else list.sort(function(a,c){return c.last-a.last});
+ return list.slice(0,6)}
+function vOpen(id){var all=B.load(),b=all.filter(function(x){return x.id===id})[0];if(!b)return;
+ var cs=B.lang==='cs';
+ V={b:b,all:all,group:vGroup(b,all),places:vPlaces(b,all),pick:null};
+ pEl('vBeer').textContent=(b.beer||(cs?'Pivo':'Beer'))+' · '+(b.d===B.today()?(cs?'dnes':'today'):B.nice(B.parse(b.d)))+' '+B.hhmm(b.ts)+(b.city?' · '+b.city:'');
+ pEl('vName').value=b.venue||'';
+ if(b.venue)V.places.forEach(function(p,i){if(p.name===b.venue&&b.vlat!=null&&Math.abs(p.lat-b.vlat)<1e-4)V.pick=i});
+ pEl('vAll').checked=true;pEl('vDel').hidden=!b.venue;
+ vDraw();pEl('vBg').hidden=false;
+ if(!b.venue)setTimeout(function(){pEl('vName').focus()},250)}
+function vDraw(){var cs=B.lang==='cs',b=V.b,n=V.group.length,name=pEl('vName').value.trim();
+ pEl('vSugBox').style.display=V.places.length?'':'none';
+ pEl('vSug').innerHTML=V.places.map(function(p,i){var d=p.dist!=null?(p.dist<1000?Math.round(p.dist/10)*10+' m':B.dec(p.dist/1000,1)+' km'):B.n(p.n,'beer');
+  return '<button class="pill'+(V.pick===i?' on':'')+'" data-i="'+i+'"><span translate="no">'+B.esc(p.name)+'</span><small>'+d+'</small></button>'}).join('');
+ Array.prototype.forEach.call(pEl('vSug').children,function(el){el.onclick=function(){var i=+el.getAttribute('data-i');V.pick=i;pEl('vName').value=V.places[i].name;vDraw()}});
+ pEl('vAllBox').hidden=n<2;
+ pEl('vAllT').textContent=cs?'Použít pro všechna piva z tohoto místa ten den ('+n+')':'Use for all beers from this spot that day ('+n+')';
+ var note='';
+ if(V.pick==null&&name&&b.lat==null)note=cs?'Pivo nemá polohu, místo proto neuvidíš na mapě ani v Hospodách.':'This beer has no location, so the place will not show on the map or in Pubs.';
+ else if(V.pick==null&&name&&b.d===B.today())note=cs?'Další piva tady dostanou toto jméno samy.':'Your next beers here will get this name automatically.';
+ pEl('vNote').textContent=note;
+ pEl('vSave').disabled=!name||name===(b.venue||'')&&V.pick!=null&&n<2}
+pEl('vName').oninput=function(){if(V.pick!=null&&pEl('vName').value.trim()!==V.places[V.pick].name)V.pick=null;vDraw()};
+pEl('vName').onkeydown=function(e){if(e.key==='Enter'){pEl('vName').blur();if(!pEl('vSave').disabled)pEl('vSave').click()}};
+function vIds(){return (pEl('vAll').checked&&V.group.length>1?V.group:[V.b]).map(function(x){return x.id})}
+function vApply(name){var b=V.b,cs=B.lang==='cs',ids=vIds(),lat=null,lng=null;
+ if(name){if(V.pick!=null){lat=V.places[V.pick].lat;lng=V.places[V.pick].lng}
+  else if(b.venue&&b.vlat!=null&&name.toLowerCase()===b.venue.toLowerCase()){lat=b.vlat;lng=b.vlng}
+  else if(b.lat!=null){lat=b.lat;lng=b.lng}}
+ /* what to put back on Undo */
+ var before=V.all.filter(function(x){return ids.indexOf(x.id)>=0}).map(function(x){return {id:x.id,name:x.venue||null,lat:x.vlat!=null?x.vlat:null,lng:x.vlng!=null?x.vlng:null}});
+ var ok=false;try{ok=A?A.setVenue(JSON.stringify({ids:ids,name:name||null,lat:lat,lng:lng})):true}catch(e){ok=false}
+ if(!ok){pEl('vNote').textContent=cs?'Místo se nepodařilo uložit.':'Could not save the place.';return}
+ pEl('vBg').hidden=true;ui.update();if(!pEl('hBg').hidden)hDraw();
+ snack(name?(cs?'Místo: ':'Place: ')+name+(ids.length>1?' · '+B.n(ids.length,'beer'):''):(cs?'Místo odebráno':'Place removed'),function(){
+  before.forEach(function(x){if(A)A.setVenue(JSON.stringify({ids:[x.id],name:x.name,lat:x.lat,lng:x.lng}))});
+  ui.update();if(!pEl('hBg').hidden)hDraw()})}
+pEl('vSave').onclick=function(){var n=pEl('vName').value.trim();if(n)vApply(n)};
+pEl('vDel').onclick=function(){vApply(null)};
+pEl('vX').onclick=function(){pEl('vBg').hidden=true};
+pEl('vBg').onclick=function(e){if(e.target===pEl('vBg'))pEl('vBg').hidden=true};
+/* under +1: where the latest beer of today was, tap to change or name it */
+window.whereUi=whereUi;function whereUi(list){var el=pEl('where'),cs=B.lang==='cs',t=B.today(),last=null;
+ for(var i=list.length-1;i>=0;i--)if(list[i].d===t){if(!last||list[i].ts>last.ts)last=list[i]}
+ if(!last||!last.id){el.hidden=true;return}
+ el.hidden=false;el.setAttribute('data-id',last.id);
+ el.innerHTML=PIN+(last.venue?'<span translate="no">'+B.esc(last.venue)+'</span><b>'+(cs?'Změnit':'Change')+'</b>':
+  '<span>'+(last.lat!=null?(cs?'Hospoda nenalezena':'No pub found'):(cs?'Bez místa':'No place'))+'</span><b>'+(cs?'Pojmenovat':'Name it')+'</b>')}
+pEl('where').onclick=function(){var id=pEl('where').getAttribute('data-id');if(id)vOpen(id)};
+/* bottom message with an Undo action */
+function snack(text,undo){var old=document.querySelector('.snack');if(old)old.remove();
+ var el=document.createElement('div');el.className='snack';
+ el.innerHTML='<span></span><button>'+(B.lang==='cs'?'Vrátit':'Undo')+'</button>';el.firstChild.textContent=text;
+ document.body.appendChild(el);requestAnimationFrame(function(){requestAnimationFrame(function(){el.classList.add('show')})});
+ var gone=false;function hide(){if(gone)return;gone=true;el.classList.remove('show');setTimeout(function(){el.remove()},400)}
+ el.lastChild.onclick=function(){undo();hide()};setTimeout(hide,7000)}
 document.getElementById('loc').onclick=function(){if(A&&!A.hasLocationPermission()&&A.requestLocation)A.requestLocation()};
 /* background behind Beero: a wall with a window (the view follows the time of day) and a wooden table */
 function room(){
@@ -159,12 +491,6 @@ document.getElementById('rs').onclick=function(){if(window._undo3d)window._undo3
 window.syncCount=function(){ui.update()};
 /* fallback when the phone cannot draw 3D (no WebGL, or the GPU crashed): show a flat Beero picture instead of a blank canvas */
 var flatOn=false;
-/* 3D quality memory: '' = full, 'lite' = no shadows/reflections (some GPUs, e.g. Pixel 10, crash on those), 'flat' = picture only */
-var G3K='beero_gl_v1';function g3(){try{return localStorage.getItem(G3K)||''}catch(e){return ''}}
-function g3set(v){try{localStorage.setItem(G3K,v)}catch(e){}}
-var LITE=g3()==='lite';
-/* 3D failed: first try the lighter 3D, only after that fall back to the picture */
-function glFail(){if(flatOn)return;if(!LITE){g3set('lite');location.reload()}else{g3set('flat');flat()}}
 function flat(){
  if(flatOn)return;flatOn=true;
  window._add3d=null;window._undo3d=null;window._evo3d=null;
@@ -175,16 +501,16 @@ function flat(){
  st.addEventListener('click',function(e){if(e.target.closest('button'))return;
   if(A)A.addBeer();ui.update();im.classList.add('pop');setTimeout(function(){im.classList.remove('pop')},200)})}
 function hasGL(){try{var t=document.createElement('canvas');return !!(window.WebGLRenderingContext&&(t.getContext('webgl2')||t.getContext('webgl')))}catch(e){return false}}
-document.getElementById('c').addEventListener('webglcontextlost',function(e){e.preventDefault();glFail()});
+document.getElementById('c').addEventListener('webglcontextlost',function(e){e.preventDefault();flat()});
 function start(){
- if(g3()==='flat'||!hasGL()){flat();return}
+ if(!hasGL()){flat();return}
  if(window.THREE){safeBoot();return}
  var s=document.createElement('script');
  s.src='https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js';
  s.onload=safeBoot;
  s.onerror=function(){flat()};
  document.head.appendChild(s)}
-function safeBoot(){try{boot()}catch(e){glFail()}}
+function safeBoot(){try{boot()}catch(e){flat()}}
 window.addEventListener('load',start);
 
 function boot(){
@@ -192,10 +518,10 @@ var PI=Math.PI,sin=Math.sin,cos=Math.cos;
 var cv=document.getElementById('c'),cnt=document.getElementById('n'),hint=document.getElementById('hint');
 var stage=document.getElementById('stage'),sr=stage.getBoundingClientRect(),h0=Math.round(sr.height-62),w0=Math.round(Math.min(sr.width,h0*1.05));
 cv.style.width=w0+'px';cv.style.height=h0+'px';
-var ren=new THREE.WebGLRenderer({canvas:cv,antialias:!LITE,alpha:true,powerPreference:LITE?'low-power':'default'});
-ren.setPixelRatio(Math.min(window.devicePixelRatio||1,LITE?1.5:2));ren.setSize(w0,h0,false);
+var ren=new THREE.WebGLRenderer({canvas:cv,antialias:true,alpha:true});
+ren.setPixelRatio(Math.min(window.devicePixelRatio||1,2));ren.setSize(w0,h0,false);
 ren.outputColorSpace=THREE.SRGBColorSpace;ren.toneMapping=THREE.ACESFilmicToneMapping;ren.toneMappingExposure=1.08;
-ren.shadowMap.enabled=!LITE;ren.shadowMap.type=THREE.PCFSoftShadowMap;
+ren.shadowMap.enabled=true;ren.shadowMap.type=THREE.PCFSoftShadowMap;
 var scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(34,w0/h0,0.1,100);
 var pm=new THREE.PMREMGenerator(ren),es=new THREE.Scene();
 var sg=new THREE.SphereGeometry(20,48,24),sp=sg.attributes.position,cl=[],i;
@@ -205,7 +531,7 @@ es.add(new THREE.Mesh(sg,new THREE.MeshBasicMaterial({vertexColors:true,side:THR
 [[6,6,8,4.5,0xfff0dc],[-9,3,2,3.5,0xffd9a0],[0,12,0,5,0xffffff],[-3,5,-9,3.5,0xbcd2ff]].forEach(function(p){
  var m=new THREE.Mesh(new THREE.PlaneGeometry(7,4),new THREE.MeshBasicMaterial({color:new THREE.Color(p[4]).multiplyScalar(p[3]),side:THREE.DoubleSide}));
  m.position.set(p[0],p[1],p[2]);m.lookAt(0,0,0);es.add(m)});
-if(!LITE)scene.environment=pm.fromScene(es,0.05).texture;else scene.add(new THREE.HemisphereLight(0xfff3e0,0x6b5032,1.3));pm.dispose();
+scene.environment=pm.fromScene(es,0.05).texture;pm.dispose();
 scene.add(new THREE.HemisphereLight(0xfff0d8,0xc8d0dc,0.3));
 var key=new THREE.DirectionalLight(0xffe6c4,1.6);key.position.set(3,7,5);key.castShadow=true;
 key.shadow.mapSize.set(1024,1024);key.shadow.camera.left=-4;key.shadow.camera.right=4;key.shadow.camera.top=6;key.shadow.camera.bottom=-2;key.shadow.radius=6;key.shadow.bias=-0.0005;key.shadow.normalBias=0.02;scene.add(key);
@@ -478,7 +804,7 @@ function setStage(k){estg=k;var L=EVO[k];
 var az=0.45,drag=0,downT=0,moved=0,lastX=0;
 function setCam(){var hs=evoG.scale.y,k=Math.max(1,0.25+0.75*Math.max(hs,evoG.scale.x*0.8)),ly=2.2*(0.5+0.5*hs);cam.position.set(sin(az)*10.5*k,ly+0.8,cos(az)*10.5*k);cam.lookAt(0,ly,0)}
 function kf(u,a){for(var i=1;i<a.length;i++){if(u<=a[i][0]){var p=a[i-1],q=a[i],f=(u-p[0])/(q[0]-p[0]||1);return p[1]+(q[1]-p[1])*f}}return a[a.length-1][1]}
-var D2R=PI/180,beers=0,variant=0,pop=0,plusT=0,t0=performance.now(),vT0=t0,lpv=new THREE.Vector3();
+var D2R=PI/180,beers=0,alc=0,variant=0,pop=0,plusT=0,t0=performance.now(),vT0=t0,lpv=new THREE.Vector3();
 /* 0-1 dance, 2 disco, 3 cheers, 4 bubbles, 5 in love, 6 overflow, 7-8 spinning, 9-10 vomit, 11 sleeping, 12+ hangover
    (order and thresholds: MOOD_V / MOOD_TH below, set in Settings) */
 /* moods in the order they follow as beers add up (variant numbers), and from how many beers each starts (Settings) */
@@ -494,7 +820,9 @@ function applyVariant(v){
  E.forEach(function(g,i){g.visible=i===fe});M.forEach(function(g,i){g.visible=i===fm});
  blush.visible=v==3||v==7||!!(L&&L.blush);
  evoColors()}
-function setVariant(){applyVariant(idxOf(beers));vT0=performance.now()}
+/* the mood follows today's alcoholic beers only: a non-alcoholic one leaves Beero as he is */
+function setVariant(){applyVariant(idxOf(alc));vT0=performance.now()}
+function alcNow(){return A&&A.getAlcCount?A.getAlcCount():beers}
 function ang(a,th){a.rotation.z=(a===armL?-1:1)*th}
 function jig(w,d){foamG.rotation.z=0.12*sin(w-d);foamG.scale.y=1+0.04*sin(2*w-d)}
 function hideX(){[hearts,sparks,zs,stars,orbs,drips,puk].forEach(function(a){a.forEach(function(s){s.visible=false})});sweat.visible=false;snore.visible=false;puddleG.visible=false}
@@ -612,7 +940,7 @@ function capturePoses(){
   v++;setTimeout(step,30)}
  measure()}
 
-function add(){beers=A?A.addBeer():beers+1;cnt.textContent=beers;setVariant();pop=0.35;plusT=0.9;
+function add(){beers=A?A.addBeer():beers+1;cnt.textContent=beers;var a=alcNow();if(a!==alc){alc=a;setVariant()}pop=0.35;plusT=0.9;
  if(navigator.vibrate)try{navigator.vibrate(18)}catch(e){}
  ui.update();setTimeout(ui.update,400);setTimeout(ui.update,8000)}
 stage.addEventListener('pointerdown',function(e){if(e.target.closest('button'))return;drag=1;moved=0;lastX=e.clientX;downT=performance.now()});
@@ -623,10 +951,11 @@ window._add3d=add;
 window._evo3d=function(n){var k=evoOf(n);if(k===estg)return;var up=estg>=0&&k>estg;setStage(k);
  if(up){pop=0.35;hint.textContent=(B.lang==='cs'?'Nový stupeň: ':'New stage: ')+EVO_N[k];setTimeout(function(){hint.innerHTML=HINT},4000)}};
 window._evo3d(B.stats(B.load()).total);
-window._undo3d=function(){beers=A?A.undo():Math.max(0,beers-1);cnt.textContent=beers;setVariant();ui.update()};
-window.syncCount=function(){ui.update();if(!A)return;loadMoods();var n=A.getCount();beers=n;cnt.textContent=n;setVariant()};
+window._undo3d=function(){beers=A?A.undo():Math.max(0,beers-1);cnt.textContent=beers;var a=alcNow();if(a!==alc){alc=a;setVariant()}ui.update()};
+window.syncCount=function(){ui.update();if(!A)return;loadMoods();var n=A.getCount();beers=n;cnt.textContent=n;var a=alcNow(),m=MOOD_TH.join();if(a!==alc||m!==syncCount.m){alc=a;syncCount.m=m;setVariant()}};
 
 if(A){beers=A.getCount();cnt.textContent=beers}
+alc=alcNow();window.syncCount.m=MOOD_TH.join();
 setVariant();requestAnimationFrame(loop);
 /* the widget is now a tally sheet, so the 3D widget pictures are no longer generated (capturePoses kept for later use) */
 }
